@@ -59,8 +59,8 @@ export const UsbCPd20WCharger = () => (
 		<WJ500V_5_08_2P
 			name="J1"
 			pcbX={-25.5}
-			pcbY={0}
-			pcbRotation={-90}
+			pcbY={0.2}
+			pcbRotation={90}
 			schSheetName="input"
 			schSectionName="input_protection"
 			schX={-8}
@@ -611,10 +611,11 @@ export const UsbCPd20WCharger = () => (
 			noConnect={["DP1", "DN1", "DP2", "DN2", "SBU1", "SBU2"]}
 		/>
 
-		<silkscreentext text="+12V" pcbX={-25.5} pcbY={6.5} fontSize="0.75mm" />
-		<silkscreentext text="GND" pcbX={-25.5} pcbY={-6.5} fontSize="0.75mm" />
-		<silkscreentext text="12V DC IN" pcbX={-23.5} pcbY={-12} fontSize="0.9mm" />
-		<silkscreentext text="USB-C PD OUT" pcbX={23} pcbY={-12} fontSize="0.8mm" />
+		<silkscreentext text="GND" pcbX={-25.5} pcbY={6.7} fontSize="0.75mm" />
+		<silkscreentext text="+12V" pcbX={-25.5} pcbY={-6.3} fontSize="0.75mm" />
+		<silkscreentext text="J1" pcbX={-28.5} pcbY={0.2} fontSize="0.8mm" />
+		<silkscreentext text="12V DC IN" pcbX={-23.5} pcbY={11.8} fontSize="0.9mm" />
+		<silkscreentext text="USB-C PD OUT" pcbX={24} pcbY={11.8} fontSize="0.8mm" />
 		<silkscreentext text="5V/3A  9V/2A" pcbX={4} pcbY={11.5} fontSize="0.8mm" />
 	</board>
 );
