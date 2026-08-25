@@ -1,134 +1,109 @@
-# USB-C PD 18W / 20W Smartphone Fast Charger Module
+# 18 W USB-C PD Wall Charger
 
-A compact **60 × 28 mm, regulated 12 V DC-to-USB-C Power Delivery (PD) source module** built with [tscircuit](https://tscircuit.com). 
+This is now the adapter architecture requested: mains goes in through `J1`, and the only USB connector (`J2`) is a USB-C **output** for a C-to-C cable.
 
-This board steps down a 12 V DC input (from a 12 V power adapter, car battery, solar system, or bench power supply) to provide USB Power Delivery fast charging directly to smartphones and other USB-C powered devices.
+```text
+85-265 VAC
+   |
+J1 + time-delay mains fuse
+   |
+Hi-Link HLK-20M15C isolated AC/DC module
+   | 15 V isolated DC
+IP6520 autonomous USB-PD buck source
+   |
+USB-C output: 5 V / 3 A, 9 V / 2 A, 12 V / 1.5 A
+```
 
----
+There is no USB-C input, no custom flyback transformer and no controller firmware to flash. The maximum advertised output is 18 W; PPS is not enabled on the selected plain `IP6520` variant.
 
-## 📱 Fast Charging Capabilities & Compatibility
+`J1` is still a two-pin screw terminal, so this PCB does not plug directly into a wall socket by itself. A rated insulated mains lead/plug, strain relief and flame-retardant touch-safe enclosure are required.
 
-- **Supported Output Profiles:**
-  - `5 V @ 3 A` (15 W) — Standard USB-C Fast Charging
-  - `9 V @ 2 A` (18 W) — USB Power Delivery (PD) Fast Charging
-- **Device Compatibility:**
-  - **Apple iPhones:** iPhone 8, X, 11, 12, 13, 14, 15, and 16 series (via USB-C to USB-C or Type-C to Lightning cable).
-  - **Android Devices:** Samsung Galaxy (S & A series), Google Pixel, OnePlus, Xiaomi, Nothing Phone, Motorola, and any phone supporting USB-PD.
-  - **Tablets / Accessories:** iPad Air/Pro/Mini, wireless earbuds, smartwatches, power banks.
-  - **Orientation-Independent:** CC1 and CC2 communication enables seamless fast charging in both cable orientations.
+## What changed
 
----
+The earlier custom DER-628-style power stage was not orderable as drawn because its transformer and EMI chokes required custom magnetics. It has been replaced as a complete power architecture rather than swapping in electrically incompatible generic coils.
 
-## 🔌 Connector Pinouts & Wiring Guide
+- Old custom `T1` flyback transformer: removed.
+- Old custom `L1` and `L2` common-mode chokes: removed.
+- Old `INN3264C`, synchronous rectifier and `DZ2S100M0L` (`D3`) bias network: removed with the flyback stage.
+- Old programmable `CYPD3175`, SWD `J3` pads and firmware profile: removed.
+- `U1`: orderable Hi-Link `HLK-20M15C`, which provides the isolated 15 V AC/DC stage and has a working exact JLC CAD model.
+- `U2`: orderable Injoinic `IP6520`, which autonomously negotiates USB-C/PD and performs the buck conversion.
+- New `L1`: an orderable 22 uH / 16 A, 8 mOhm buck inductor; this reference no longer means a common-mode choke and meets the IP6520 reference circuit's sub-12 mOhm DCR guidance.
+- `F1`: orderable 2 A / 250 V slow-blow SMD fuse, selected instead of the unavailable `37013150410`. The rating/type follows Hi-Link's external-fuse recommendation for the 20 W module family.
 
-| Connector | Reference | Type | Pin | Label | Description |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **DC Power Input** | **J1** | 5.08 mm Screw Terminal (`WJ500V-5.08-2P`) | **Pin 1 (Top)** | `+12V` | Positive DC Input (10.5 V – 14.0 V DC, min 3 A) |
-| | | | **Pin 2 (Bottom)** | `GND` | Power Supply Ground |
-| **Fast Charging Port** | **J2** | 16-Pin / 12-Contact USB-C (`TYPE-C-31-M-12`) | **VBUS** | `VBUS` | Regulated 5 V / 9 V Power Output |
-| | | | **CC1 / CC2** | `CC1 / CC2` | USB-PD Handshake & Cable Orientation |
-| | | | **GND / Shield** | `GND` | Ground & ESD Chassis Ground |
+The 15 V module was selected rather than a 12 V module so the buck converter has regulation headroom for its 12 V PDO under load.
 
-> [!NOTE]
-> This board is designed for **12 V DC power sources**. It is **not** a direct mains-voltage AC (220 V / 110 V) wall charger. For home wall socket use, connect an external 12 V DC adapter (2 A to 3 A rating).
+## Orderable BOM
 
----
+| Ref | Manufacturer part | JLCPCB/LCSC | Function |
+| --- | --- | --- | --- |
+| J1 | WJ500V-5.08-2P | C8465 | AC line/neutral screw terminal |
+| F1 | SCT1032T2A250V | C19712562 | slow-blow mains fuse, 2 A / 250 V |
+| U1 | Hi-Link HLK-20M15C | C52746093 | encapsulated 85-265 VAC to 15 V / 1.33 A, 20 W module |
+| C1 | RVE100UF35V67RV0072 | C2836437 | 100 uF / 35 V isolated-input bulk capacitor |
+| C2, C5 | CC0603KRX7R9BB104 | C14663 | 100 nF / 50 V X7R bypass capacitors |
+| U2 | Injoinic IP6520 | C7433861 | autonomous USB-C/PD buck source controller |
+| C3 | GRM188Z71E225KE43D | C415535 | 2.2 uF / 25 V bootstrap capacitor |
+| L1 | PDMTAT068125-220MLU | C3011539 | 22 uH / 16 A, 8 mOhm buck inductor |
+| R1 | FRC0603F2R00TS | C2933191 | 2 ohm switch-node snubber resistor |
+| C6 | GRM1885C1H102JA01D | C77026 | 1 nF / 50 V C0G snubber capacitor |
+| C4 | RVT1E101M0607 | C72477 | 100 uF / 25 V USB VBUS bulk capacitor |
+| R2 | 0603WAF0000T5E | C21189 | 0 ohm USB shell-to-ground link |
+| J2 | TYPE-C-31-M-12 | C165948 | USB-C output receptacle |
 
-## 📦 Complete Bill of Materials (BOM) & Imported Parts
+The special/mechanical parts use exact JLCPCB imports with their catalog footprint and CAD model. Ordinary 0603 passives use tscircuit built-ins and Footprinter footprints, while retaining exact manufacturer and supplier part numbers.
 
-### 1. Main Integrated Circuits & Semiconductors
+Catalog availability does not guarantee that every through-hole/mixed-technology part will be assembled by a particular JLCPCB service. `U1`, `L1` and `J1` may need manual or through-hole assembly; check live stock and assembly capability before ordering.
 
-| Ref | Part Number | JLCPCB / LCSC ID | Package | Purpose / Function |
-| :--- | :--- | :--- | :--- | :--- |
-| **U1** | `TPS54302DDCT` | **C129370** | SOT-23-6 | 3 A, 28 V Synchronous Step-Down (Buck) Converter |
-| **U2** | `TPS25740ARGER` | **C544309** | VQFN-24 | Hardware-based USB-PD 2.0/3.0 Source Controller |
-| **Q1** | `AO4407A` | **C2841482** | SOIC-8 | 30 V P-Channel MOSFET for Reverse-Polarity Protection |
-| **Q2, Q3** | `CSD17579Q3A` | **C97376** | VSON-8 (3.3×3.3) | Back-to-Back N-Channel MOSFETs for VBUS Power Isolation |
-| **D1** | `SMBJ15A` | **C70274** | SMB (DO-214AA) | 15 V Unidirectional TVS Diode for Input Surge Protection |
-| **D2** | `B340A-13-F` | **C8598** | SMA (DO-214AC) | 3 A, 40 V Schottky Diode for VBUS Negative Transient Clamp |
+## Electrical implementation
 
-### 2. Connectors & Inductors
+The IP6520 application follows the component values in its reference circuit:
 
-| Ref | Part Number | JLCPCB / LCSC ID | Package | Purpose / Function |
-| :--- | :--- | :--- | :--- | :--- |
-| **J1** | `WJ500V-5.08-2P` | **C8465** | 5.08 mm Pitch 2P | 2-Pin Screw Terminal Block for DC Input |
-| **J2** | `TYPE-C-31-M-12` | **C165948** | Hybrid SMT/THT | 16-Pin USB Type-C Receptacle |
-| **L1** | `FXL0630-100-M` | **C167223** | 6.8 × 6.8 mm SMD | 10 µH, 4.5 A High-Current Buck Power Inductor |
-| **F1** | 3 A, 30 V Fast Fuse | — | SMD 1206 | Input Overcurrent Protection |
+- 100 uF / 35 V plus 100 nF at `VIN`
+- 2.2 uF from `BST` to `SW`
+- 22 uH power inductor from `SW` to `VBUS_OUT`
+- 100 uF / 25 V plus 100 nF on USB VBUS
+- 2 ohm + 1 nF series snubber from `SW` to ground
+- direct CC1, CC2, D+ and D- routing to the USB-C receptacle
+- exposed-pad ground vias and a secondary-side bottom ground pour
 
-### 3. Precision Resistors & Current Sense
+Power and mains routes have explicit wide traces. The isolated ground pour is restricted to the low-voltage side and does not enter the mains area.
 
-| Ref | Value | Tolerance / Rating | Package | Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| **R1** | 100 kΩ | 1%, 1/10 W | 0603 | Q1 Gate pull-down resistor |
-| **R2** | 511 kΩ | 1%, 1/10 W | 0603 | TPS54302 EN voltage divider (top) |
-| **R3** | 105 kΩ | 1%, 1/10 W | 0603 | TPS54302 EN voltage divider (bottom) |
-| **R4** | 100 kΩ | 0.5%, 1/10 W | 0603 | Buck feedback network divider (top) |
-| **R5** | 13.5 kΩ | 0.5%, 1/10 W | 0603 | Buck feedback fixed resistor (sets 5.01 V default) |
-| **R6** | 15 kΩ | 0.5%, 1/10 W | 0603 | Switched feedback resistor (switches to 8.99 V on 9 V PD) |
-| **R7** | 100 kΩ | 1%, 1/10 W | 0603 | TPS25740A HIPWR configuration pull-up to DVDD |
-| **R8** | 120 Ω | 1%, 0.5 W | 1206 | Fast VBUS discharge upon cable disconnect |
-| **R10** | 6.4 mΩ (0.0064 Ω) | 1%, 1 W | 2512 | Precision Kelvin Current Sense Shunt for USB Overcurrent Protection |
-| **R11** | 10 Ω | 1%, 1/10 W | 0603 | VBUS MOSFET gate drive damping resistor |
-| **R12** | 1 kΩ | 1%, 1/10 W | 0603 | MOSFET turn-on slew-rate control resistor |
+## Production status and safety
 
-### 4. Capacitors
+This is a **prototype design, not a finished or certified consumer charger**. Using an approved encapsulated AC/DC module removes the custom-transformer manufacturing problem, but the approvals of that module do not automatically certify this PCB or the final adapter.
 
-| Ref | Value | Voltage Rating | Package | Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| **C1** | 47 µF | 25 V X5R/X7R | 1210 | Main DC input bulk capacitor |
-| **C2** | 10 µF | 25 V X7R | 1206 | Buck converter high-frequency input capacitor |
-| **C3, C14** | 0.1 µF | 25 V X7R | 0603 | High-frequency input & output decoupling |
-| **C4** | 0.1 µF | 25 V X7R | 0603 | TPS54302 BOOT-to-SW bootstrap capacitor |
-| **C5, C6** | 22 µF | 16 V X7R | 1210 | Buck converter output filtering capacitors |
-| **C7** | 75 pF | 25 V C0G/NP0 | 0603 | Buck feedback feedforward capacitor |
-| **C8** | 0.1 µF | 16 V X7R | 0603 | TPS25740A VTX charge pump capacitor |
-| **C9** | 0.1 µF | 16 V X7R | 0603 | TPS25740A VAUX / Gate Drive supply decoupling |
-| **C10** | 0.22 µF | 10 V X7R | 0603 | TPS25740A DVDD (3.3 V LDO) bypass capacitor |
-| **C11, C12** | 560 pF | 25 V C0G/NP0 | 0603 | CC1 and CC2 lines ESD / RF filtering |
-| **C13** | 6.8 µF | 25 V X7R | 1210 | USB-C VBUS receptacle decoupling capacitor |
-| **C15** | 10 nF | 25 V X7R | 0603 | VBUS switch gate slew-rate shaping capacitor |
+Before connecting a phone or mains power, the finished product still needs qualified review and testing for:
 
----
+- fuse coordination and abnormal/fault conditions
+- creepage, clearance, dielectric strength and touch current
+- surge, EFT, ESD and conducted/radiated EMI
+- output short-circuit and attach/detach behavior
+- 5 V, 9 V and 12 V PD negotiation with a protocol analyzer
+- regulation and thermal rise at 18 W in the final closed enclosure
+- plug, cable, strain-relief and fire-enclosure compliance
 
-## ⚙️ How the Circuit Works
+Do not touch or probe the energized board. First power-up must be performed by a qualified person in an enclosed, current-limited, fused test fixture.
 
-1. **Input Protection:**
-   - 12 V DC enters via `J1`. `F1` (3 A fuse) provides overcurrent safety.
-   - `Q1` (P-MOSFET) ensures the circuit is unharmed if input polarity is accidentally reversed.
-   - `D1` (TVS Diode) clamps voltage spikes and inductive surges.
-2. **Synchronous Buck Conversion (TPS54302):**
-   - High-efficiency synchronous rectification converts 12 V DC to 5 V or 9 V.
-   - Fixed divider `R4` (100 kΩ) & `R5` (13.5 kΩ) sets a baseline output of **5.01 V**.
-3. **USB-PD Autonomous Negotiation (TPS25740A):**
-   - When a phone is connected to `J2`, `U2` detects the sink on `CC1`/`CC2` and advertises 5 V @ 3 A (15 W) and 9 V @ 2 A (18 W).
-   - If the smartphone requests 9 V, `U2` pulls the `CTL2` pin to GND, placing `R6` (15 kΩ) in parallel with `R5`. This shifts the effective feedback resistance to 7.105 kΩ, boosting the buck output seamlessly to **8.99 V**.
-4. **VBUS Power Path & Protection:**
-   - Dual back-to-back MOSFETs (`Q2`, `Q3`) isolate `VBUS` until proper USB-PD negotiation is complete.
-   - `R10` (6.4 mΩ) senses current for active hardware overcurrent protection (OCP).
-   - Upon unplugging the phone, `U2` engages `R8` (120 Ω) to rapidly discharge `VBUS` back to 0 V within USB-PD timing specifications.
+## Verification
 
----
-
-## 🛠️ Validation & Development Commands
-
-Run standard verification and snapshot tests:
+Run:
 
 ```sh
-# Install dependencies
-bun install
-
-# Run TypeScript typecheck
 bun run typecheck
-
-# Check netlist & shorts
 bunx tsci check netlist
-bunx tsci check shorts index.circuit.tsx
-
-# Build schematic and PCB outputs
+bunx tsci check shorts
+bunx tsci check placement
 bun run build
-
-# Update 2D and 3D snapshots
-bun run snapshot:update
-bun run snapshot:3d:update
 ```
+
+The generated checks validate CAD connectivity, shorts and placement. They do not substitute for USB-PD protocol, electrical-safety, EMI or thermal laboratory tests.
+
+## References
+
+- [Hi-Link HLK-20M15 family product page](https://www.hlktech.net/index.php?cateid=734&id=128)
+- [Hi-Link 20 W module datasheet](https://h.hlktech.com/download/ACDC%E7%94%B5%E6%BA%90%E6%A8%A1%E5%9D%9720W%E7%B3%BB%E5%88%97/1/%E6%B5%B7%E5%87%8C%E7%A7%9120W%E7%B3%BB%E5%88%97%E7%94%B5%E6%BA%90%E6%A8%A1%E5%9D%97%E8%A7%84%E6%A0%BC%E4%B9%A6V1.6.pdf)
+- [LCSC IP6520 product page](https://www.lcsc.com/product-detail/Power-Management-Specialized_Injoinic-IP6520_C7433861.html)
+- [IP6520 datasheet](https://datasheet.lcsc.com/datasheet/pdf/70dbddfbb53d72ec382491598ecf443f.pdf?productCode=C7433861)
+- [LCSC PDMTAT068125-220MLU product page](https://www.lcsc.com/product-detail/C3011539.html)
+- [Power Integrations DER-628 report](https://www.power.com/sites/default/files/documents/der-628_18watt_usb_pd_charger_using_innoswitch3-cp_and_cypress_controller.pdf) — retained only as background for why the previous custom-magnetics approach could not use a generic drop-in transformer

@@ -1,623 +1,306 @@
-import "tscircuit";
+import "tscircuit"
 
-import { AO4407A } from "./imports/AO4407A";
-import { CSD17579Q3A } from "./imports/CSD17579Q3A";
-import { FXL0630_100_M } from "./imports/FXL0630_100_M";
-import { TPS25740ARGER } from "./imports/TPS25740ARGER";
-import { TPS54302DDCT } from "./imports/TPS54302DDCT";
-import { TYPE_C_31_M_12 } from "./imports/TYPE_C_31_M_12";
-import { WJ500V_5_08_2P } from "./imports/WJ500V_5_08_2P";
+import { HLK_20M15C } from "./imports/HLK_20M15C"
+import { IP6520 } from "./imports/IP6520"
+import { PDMTAT068125_220MLU } from "./imports/PDMTAT068125_220MLU"
+import { RVE100UF35V67RV0072 } from "./imports/RVE100UF35V67RV0072"
+import { RVT1E101M0607 } from "./imports/RVT1E101M0607"
+import { SCT1032T2A250V } from "./imports/SCT1032T2A250V"
+import { TYPE_C_31_M_12 } from "./imports/TYPE_C_31_M_12"
+import { WJ500V_5_08_2P } from "./imports/WJ500V_5_08_2P"
 
 /**
- * 12 V DC input to 18 W USB-C Power Delivery source.
+ * Orderable 85-265 VAC to USB-C PD wall-charger prototype.
  *
- * Advertised PDOs:
- *   - 5 V @ 3 A
- *   - 9 V @ 2 A
- *
- * TPS25740A configuration:
- *   PSEL=GND -> 36 W table entry, PCTRL=GND -> half power (18 W)
- *   HIPWR=DVDD through 100k -> 3 A cable limit and suppresses the 15 V PDO
- *   EN9V=GND -> enables the 9 V PDO
- *
- * Reference topology and placement:
- *   - TI TPS25740A datasheet, Figures 36, 56, 67 and 68
- *   - TI TPS25740AEVM-741 user guide, Figures 2 and 3
- *   - TI TPS54302EVM-716 user guide, Figures 3-1 and 4-1
+ * The encapsulated HLK-20M15C module replaces the former custom flyback,
+ * transformer and EMI magnetics. IP6520 converts its isolated 15 V output to
+ * fixed USB-PD profiles: 5 V / 3 A, 9 V / 2 A and 12 V / 1.5 A (18 W max).
  */
-export const UsbCPd20WCharger = () => (
-	<board
-		name="USB_C_PD_20W_CHARGER"
-		title="12 V to USB-C PD 18 W Charger"
-		width="60mm"
-		height="28mm"
-		borderRadius="2mm"
-		thickness="1.6mm"
-		material="fr4"
-		layers={2}
-		solderMaskColor="#176b43"
-		defaultTraceWidth="0.25mm"
-		schMaxTraceDistance="3mm"
-	>
-		<schematicsheet name="input" displayName="12 V Input and Protection" sheetIndex={1} />
-		<schematicsheet name="buck" displayName="5 V / 9 V Synchronous Buck" sheetIndex={2} />
-		<schematicsheet name="pd" displayName="USB-C PD Source and Power Path" sheetIndex={3} />
-		<schematicsection name="input_protection" displayName="DC Input and Protection" />
-		<schematicsection name="buck_regulator" displayName="5 V / 9 V Buck Regulator" />
-		<schematicsection name="pd_source" displayName="USB-C PD Source" />
+export const UsbCPd18WWallCharger = () => (
+  <board
+    name="USB_C_PD_18W_WALL_CHARGER"
+    title="85-265 VAC to USB-C PD 18 W Module-Based Wall Charger"
+    width="110mm"
+    height="60mm"
+    borderRadius="2mm"
+    thickness="1.6mm"
+    material="fr4"
+    layers={2}
+    isViaInPadAllowed
+    solderMaskColor="#176b43"
+    defaultTraceWidth="0.25mm"
+    autorouterVersion="beta_pipeline9"
+    autorouterEffortLevel="5x"
+    schMaxTraceDistance="3mm"
+  >
+    <schematicsheet name="mains" displayName="AC Input and Isolated AC/DC Module" sheetIndex={1} />
+    <schematicsheet name="pd" displayName="18 W USB-C PD Buck Output" sheetIndex={2} />
+    <schematicsection name="ac_input" displayName="Hazardous 85-265 VAC Input" />
+    <schematicsection name="isolated_dc" displayName="Isolated 15 V Supply" />
+    <schematicsection name="pd_output" displayName="USB-C PD Output" />
 
-		<copperpour
-			name="GND_BOTTOM"
-			layer="bottom"
-			connectsTo="net.GND"
-			padMargin="0.2mm"
-			traceMargin="0.15mm"
-			boardEdgeMargin="0.35mm"
-		/>
+    {/* The external mains lead and enclosure must be insulated and strain-relieved. */}
+    <WJ500V_5_08_2P
+      name="J1"
+      pcbX={-49}
+      pcbY={22}
+      pcbRotation={90}
+      schSheetName="mains"
+      schSectionName="ac_input"
+      schX={-8}
+      schY={1}
+      connections={{ L: "net.AC_L", N: "net.AC_N" }}
+    />
+    <SCT1032T2A250V
+      name="F1"
+      pcbX={-48}
+      pcbY={-20}
+      schSheetName="mains"
+      schSectionName="ac_input"
+      schX={-5}
+      schY={2}
+      connections={{ pin1: "net.AC_L", pin2: "net.AC_L_FUSED" }}
+    />
+    <HLK_20M15C
+      name="U1"
+      pcbX={-8}
+      pcbY={11}
+      schSheetName="mains"
+      schSectionName="isolated_dc"
+      schX={0}
+      schY={1}
+      schWidth={2.4}
+      schHeight={1.8}
+      schPinArrangement={{
+        leftSide: { direction: "top-to-bottom", pins: ["AC1", "AC2"] },
+        rightSide: { direction: "top-to-bottom", pins: ["VOUT_15V", "GND"] },
+      }}
+      connections={{
+        AC2: "net.AC_N",
+        AC1: "net.AC_L_FUSED",
+        VOUT_15V: "net.VIN_15V",
+        GND: "net.GND",
+      }}
+    />
 
-		{/* Left edge: 12 V DC input on a two-pin screw terminal. */}
-		<WJ500V_5_08_2P
-			name="J1"
-			pcbX={-25.5}
-			pcbY={0.2}
-			pcbRotation={90}
-			schSheetName="input"
-			schSectionName="input_protection"
-			schX={-8}
-			schY={2}
-			connections={{ VIN_POS: "net.VIN_RAW", GND: "net.GND" }}
-		/>
-		<fuse
-			name="F1"
-			currentRating="3A"
-			voltageRating="30V"
-			footprint="res1206"
-			pcbX={-17.0}
-			pcbY={8.0}
-			pcbRotation={90}
-			schSheetName="input"
-			schSectionName="input_protection"
-			schX={-5.5}
-			schY={2}
-			connections={{ pin1: "net.VIN_RAW", pin2: "net.VIN_FUSED" }}
-		/>
-		<AO4407A
-			name="Q1"
-			pcbX={-16}
-			pcbY={0}
-			pcbRotation={0}
-			schSheetName="input"
-			schSectionName="input_protection"
-			schX={-2.5}
-			schY={2}
-			connections={{
-				D1: "net.VIN_FUSED",
-				D2: "net.VIN_FUSED",
-				D3: "net.VIN_FUSED",
-				D4: "net.VIN_FUSED",
-				S1: "net.VIN",
-				S2: "net.VIN",
-				S3: "net.VIN",
-				G: "net.Q1_GATE",
-			}}
-		/>
-		<resistor
-			name="R1"
-			resistance="100kohm"
-			footprint="res0603"
-			pcbX={-16}
-			pcbY={-5.5}
-			schSheetName="input"
-			schSectionName="input_protection"
-			schX={0}
-			schY={0.5}
-			connections={{ pin1: "net.Q1_GATE", pin2: "net.GND" }}
-		/>
-		<diode
-			name="D1"
-			manufacturerPartNumber="SMBJ15A"
-			tvs
-			footprint="smb"
-			pcbX={-23}
-			pcbY={-9.5}
-			pcbRotation={90}
-			schSheetName="input"
-			schSectionName="input_protection"
-			schX={2}
-			schY={0.5}
-			connections={{ cathode: "net.VIN", anode: "net.GND" }}
-		/>
-		<capacitor
-			name="C1"
-			capacitance="47uF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap1210"
-			pcbX={-18}
-			pcbY={-9}
-			schSheetName="input"
-			schSectionName="input_protection"
-			schX={4.5}
-			schY={-1}
-			connections={{ pin1: "net.VIN", pin2: "net.GND" }}
-		/>
+    {/* IP6520 reference application: local input bulk and high-frequency bypass. */}
+    <RVE100UF35V67RV0072
+      name="C1"
+      maxVoltageRating="35V"
+      polarized
+      pcbX={26}
+      pcbY={-3}
+      schSheetName="pd"
+      schSectionName="isolated_dc"
+      schX={-8}
+      schY={3}
+      connections={{ pin1: "net.VIN_15V", pin2: "net.GND" }}
+    />
+    <capacitor
+      name="C2"
+      capacitance="100nF"
+      maxVoltageRating="50V"
+      manufacturerPartNumber="CC0603KRX7R9BB104"
+      supplierPartNumbers={{ jlcpcb: ["C14663"] }}
+      footprint="cap0603"
+      pcbX={29.5}
+      pcbY={-8}
+      schSheetName="pd"
+      schSectionName="isolated_dc"
+      schX={-6}
+      schY={3}
+      connections={{ pin1: "net.VIN_15V", pin2: "net.GND" }}
+    />
+    <IP6520
+      name="U2"
+      pcbX={34}
+      pcbY={-3}
+      schSheetName="pd"
+      schSectionName="pd_output"
+      schX={0}
+      schY={1}
+      schWidth={2.4}
+      schHeight={2.2}
+      connections={{
+        VIN: "net.VIN_15V",
+        GND: "net.GND",
+        SW: "net.SW",
+        BST: "net.BST",
+        VOUT: "net.VBUS_OUT",
+        DM: "net.USB_DM",
+        DP: "net.USB_DP",
+        CC1: "net.CC1",
+        CC2: "net.CC2",
+      }}
+    />
+    <via name="U2_EP_1" pcbX={33.45} pcbY={-3.45} connectsTo="net.GND" outerDiameter="0.55mm" holeDiameter="0.25mm" />
+    <via name="U2_EP_2" pcbX={34.55} pcbY={-3.45} connectsTo="net.GND" outerDiameter="0.55mm" holeDiameter="0.25mm" />
+    <via name="U2_EP_3" pcbX={33.45} pcbY={-2.55} connectsTo="net.GND" outerDiameter="0.55mm" holeDiameter="0.25mm" />
+    <via name="U2_EP_4" pcbX={34.55} pcbY={-2.55} connectsTo="net.GND" outerDiameter="0.55mm" holeDiameter="0.25mm" />
+    <capacitor
+      name="C3"
+      capacitance="2.2uF"
+      maxVoltageRating="25V"
+      manufacturerPartNumber="GRM188Z71E225KE43D"
+      supplierPartNumbers={{ jlcpcb: ["C415535"] }}
+      footprint="cap0603"
+      pcbX={38.5}
+      pcbY={-7}
+      schOrientation="vertical"
+      schSheetName="pd"
+      schSectionName="pd_output"
+      schX={3}
+      schY={3}
+      connections={{ pin1: "net.BST", pin2: "net.SW" }}
+    />
 
-		{/* TPS54302 synchronous buck, default 5 V and CTL2-selected 9 V. */}
-		<TPS54302DDCT
-			name="U1"
-			pcbX={-11}
-			pcbY={0}
-			pcbRotation={180}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={-2}
-			schY={1}
-			connections={{
-				GND: "net.GND",
-				SW: "net.SW",
-				VIN: "net.VIN",
-				FB: "net.FB",
-				EN: "net.BUCK_EN",
-				BOOT: "net.BOOT",
-			}}
-		/>
-		<capacitor
-			name="C2"
-			capacitance="10uF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap1206"
-			pcbX={-12}
-			pcbY={5.5}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={-6}
-			schY={-1}
-			connections={{ pin1: "net.VIN", pin2: "net.GND" }}
-		/>
-		<capacitor
-			name="C3"
-			capacitance="0.1uF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap0603"
-			pcbX={-12}
-			pcbY={-5}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={-4.5}
-			schY={-1}
-			connections={{ pin1: "net.VIN", pin2: "net.GND" }}
-		/>
-		<resistor
-			name="R2"
-			resistance="511kohm"
-			footprint="res0603"
-			pcbX={-10}
-			pcbY={7.5}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={-5}
-			schY={3.5}
-			connections={{ pin1: "net.VIN", pin2: "net.BUCK_EN" }}
-		/>
-		<resistor
-			name="R3"
-			resistance="105kohm"
-			footprint="res0603"
-			pcbX={-6.5}
-			pcbY={7.5}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={-5}
-			schY={2.2}
-			connections={{ pin1: "net.BUCK_EN", pin2: "net.GND" }}
-		/>
-		<capacitor
-			name="C4"
-			capacitance="0.1uF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap0603"
-			pcbX={-8.5}
-			pcbY={-4.5}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={1.5}
-			schY={3}
-			connections={{ pin1: "net.BOOT", pin2: "net.SW" }}
-		/>
-		<FXL0630_100_M
-			name="L1"
-			pcbX={-4}
-			pcbY={0}
-			pcbRotation={0}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={3.5}
-			schY={1}
-			connections={{ pin1: "net.SW", pin2: "net.BUCK_OUT" }}
-		/>
-		<capacitor
-			name="C5"
-			capacitance="22uF"
-			schOrientation="vertical"
-			maxVoltageRating="16V"
-			footprint="cap1210"
-			pcbX={2.8}
-			pcbY={3.5}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={6.5}
-			schY={-1}
-			connections={{ pin1: "net.BUCK_OUT", pin2: "net.GND" }}
-		/>
-		<capacitor
-			name="C6"
-			capacitance="22uF"
-			schOrientation="vertical"
-			maxVoltageRating="16V"
-			footprint="cap1210"
-			pcbX={2.8}
-			pcbY={-3.5}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={8}
-			schY={-1}
-			connections={{ pin1: "net.BUCK_OUT", pin2: "net.GND" }}
-		/>
-		<resistor
-			name="R4"
-			resistance="100kohm"
-			footprint="res0603"
-			pcbX={-5}
-			pcbY={-5.5}
-			pcbRotation={90}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={4.5}
-			schY={-3}
-			connections={{ pin1: "net.BUCK_OUT", pin2: "net.FB" }}
-		/>
-		<capacitor
-			name="C7"
-			capacitance="75pF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap0603"
-			pcbX={-7}
-			pcbY={-7.5}
-			pcbRotation={90}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={4.5}
-			schY={-4.2}
-			connections={{ pin1: "net.BUCK_OUT", pin2: "net.FB" }}
-		/>
-		<resistor
-			name="R5"
-			resistance="13.5kohm"
-			footprint="res0603"
-			pcbX={-2}
-			pcbY={-6}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={6.5}
-			schY={-3}
-			connections={{ pin1: "net.FB", pin2: "net.GND" }}
-		/>
-		<resistor
-			name="R6"
-			resistance="15kohm"
-			footprint="res0603"
-			pcbX={1}
-			pcbY={-6}
-			schSheetName="buck"
-			schSectionName="buck_regulator"
-			schX={6.5}
-			schY={-4.5}
-			connections={{ pin1: "net.FB", pin2: "net.PD_CTL2" }}
-		/>
+    {/* Orderable 22 uH / 16 A, 8 mOhm buck inductor. The old EMI chokes were removed with the flyback stage. */}
+    <PDMTAT068125_220MLU
+      name="L1"
+      pcbX={43.5}
+      pcbY={9}
+      pcbRotation={270}
+      schSheetName="pd"
+      schSectionName="pd_output"
+      schX={4}
+      schY={1}
+      connections={{ pin1: "net.SW", pin2: "net.VBUS_OUT" }}
+    />
+    <resistor
+      name="R1"
+      resistance="2ohm"
+      tolerance="1%"
+      manufacturerPartNumber="FRC0603F2R00TS"
+      supplierPartNumbers={{ jlcpcb: ["C2933191"] }}
+      footprint="res0603"
+      pcbX={33}
+      pcbY={-9.5}
+      schSheetName="pd"
+      schSectionName="pd_output"
+      schX={2}
+      schY={-2}
+      connections={{ pin1: "net.SW", pin2: "net.SNUB" }}
+    />
+    <capacitor
+      name="C6"
+      capacitance="1nF"
+      maxVoltageRating="50V"
+      manufacturerPartNumber="GRM1885C1H102JA01D"
+      supplierPartNumbers={{ jlcpcb: ["C77026"] }}
+      footprint="cap0603"
+      pcbX={36}
+      pcbY={-9.5}
+      schOrientation="vertical"
+      schSheetName="pd"
+      schSectionName="pd_output"
+      schX={4}
+      schY={-2}
+      connections={{ pin1: "net.SNUB", pin2: "net.GND" }}
+    />
 
-		{/* Firmware-free USB-C PD source controller and receptacle-safe power path. */}
-		<TPS25740ARGER
-			name="U2"
-			pcbX={8.2}
-			pcbY={0}
-			pcbRotation={0}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={-0.1}
-			schY={0}
-			connections={{
-				VTX: "net.VTX",
-				CC1: "net.CC1",
-				CC2: "net.CC2",
-				GND: "net.GND",
-				HIPWR: "net.HIPWR_CFG",
-				CTL2: "net.PD_CTL2",
-				EN9V: "net.GND",
-				NC1: "net.GND",
-				NC2: "net.GND",
-				PSEL: "net.GND",
-				DVDD: "net.DVDD",
-				PCTRL: "net.GND",
-				GD: "net.VAUX",
-				VAUX: "net.VAUX",
-				VDD: "net.GND",
-				AGND: "net.GND",
-				ISNS: "net.ISNS",
-				VPWR: "net.BUCK_OUT",
-				VBUS: "net.VBUS",
-				GDNG: "net.GDNG_RAW",
-				GDNS: "net.FET_COMMON",
-				DSCG: "net.DSCG",
-				EP: "net.GND",
-			}}
-			noConnect={["CTL1", "UFP"]}
-		/>
-		<capacitor
-			name="C8"
-			capacitance="0.1uF"
-			schOrientation="vertical"
-			maxVoltageRating="16V"
-			footprint="cap0603"
-			pcbX={4.5}
-			pcbY={8}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={-5}
-			schY={-4}
-			connections={{ pin1: "net.VTX", pin2: "net.GND" }}
-		/>
-		<capacitor
-			name="C9"
-			capacitance="0.1uF"
-			schOrientation="vertical"
-			maxVoltageRating="16V"
-			footprint="cap0603"
-			pcbX={7.5}
-			pcbY={8}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={-3.5}
-			schY={-4}
-			connections={{ pin1: "net.VAUX", pin2: "net.GND" }}
-		/>
-		<capacitor
-			name="C10"
-			capacitance="0.22uF"
-			schOrientation="vertical"
-			maxVoltageRating="10V"
-			footprint="cap0603"
-			pcbX={10.5}
-			pcbY={8}
-			pcbRotation={180}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={-2}
-			schY={-4}
-			connections={{ pin1: "net.DVDD", pin2: "net.GND" }}
-		/>
-		<capacitor
-			name="C14"
-			capacitance="0.1uF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap0603"
-			pcbX={5}
-			pcbY={-6}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={-0.5}
-			schY={-4}
-			connections={{ pin1: "net.BUCK_OUT", pin2: "net.GND" }}
-		/>
-		<resistor
-			name="R7"
-			resistance="100kohm"
-			footprint="res0603"
-			pcbX={13.5}
-			pcbY={10.5}
-			pcbRotation={90}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={-4}
-			schY={3}
-			connections={{ pin1: "net.DVDD", pin2: "net.HIPWR_CFG" }}
-		/>
-		<capacitor
-			name="C11"
-			capacitance="560pF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap0603"
-			pcbX={15}
-			pcbY={-8.5}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={-5}
-			schY={5}
-			connections={{ pin1: "net.CC1", pin2: "net.GND" }}
-		/>
-		<capacitor
-			name="C12"
-			capacitance="560pF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap0603"
-			pcbX={18.5}
-			pcbY={-7}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={-3.5}
-			schY={5}
-			connections={{ pin1: "net.CC2", pin2: "net.GND" }}
-		/>
-		<CSD17579Q3A
-			name="Q2"
-			pcbX={13.5}
-			pcbY={3.2}
-			pcbRotation={0}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={4}
-			schY={0}
-			connections={{
-				D1: "net.BUCK_OUT",
-				D2: "net.BUCK_OUT",
-				D3: "net.BUCK_OUT",
-				D4: "net.BUCK_OUT",
-				D5: "net.BUCK_OUT",
-				S1: "net.FET_COMMON",
-				S2: "net.FET_COMMON",
-				S3: "net.FET_COMMON",
-				G: "net.VBUS_GATE",
-			}}
-		/>
-		<CSD17579Q3A
-			name="Q3"
-			pcbX={13.5}
-			pcbY={-3.2}
-			pcbRotation={180}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={7.1}
-			schY={0}
-			connections={{
-				D1: "net.ISNS",
-				D2: "net.ISNS",
-				D3: "net.ISNS",
-				D4: "net.ISNS",
-				D5: "net.ISNS",
-				S1: "net.FET_COMMON",
-				S2: "net.FET_COMMON",
-				S3: "net.FET_COMMON",
-				G: "net.VBUS_GATE",
-			}}
-		/>
-		<resistor
-			name="R11"
-			resistance="10ohm"
-			footprint="res0603"
-			pcbX={12.5}
-			pcbY={6.25}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={3}
-			schY={2.5}
-			connections={{ pin1: "net.GDNG_RAW", pin2: "net.VBUS_GATE" }}
-		/>
-		<resistor
-			name="R12"
-			resistance="1kohm"
-			footprint="res0603"
-			pcbX={15.5}
-			pcbY={6.25}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={4.5}
-			schY={2.5}
-			connections={{ pin1: "net.VBUS_GATE", pin2: "net.SLEW_NODE" }}
-		/>
-		<capacitor
-			name="C15"
-			capacitance="10nF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap0603"
-			pcbX={18.5}
-			pcbY={7}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={6}
-			schY={2.5}
-			connections={{ pin1: "net.SLEW_NODE", pin2: "net.FET_COMMON" }}
-		/>
-		<resistor
-			name="R10"
-			resistance="0.0064ohm"
-			footprint="res2512"
-			pcbX={17.7}
-			pcbY={0}
-			pcbRotation={90}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={9.2}
-			schY={0}
-			connections={{ pin1: "net.ISNS", pin2: "net.VBUS" }}
-		/>
-		<resistor
-			name="R8"
-			resistance="120ohm"
-			footprint="res1206"
-			pcbX={10.5}
-			pcbY={-7.5}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={5}
-			schY={-3}
-			connections={{ pin1: "net.DSCG", pin2: "net.VBUS" }}
-		/>
-		<capacitor
-			name="C13"
-			capacitance="6.8uF"
-			schOrientation="vertical"
-			maxVoltageRating="25V"
-			footprint="cap1210"
-			pcbX={17.5}
-			pcbY={-11}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={9.5}
-			schY={-3}
-			connections={{ pin1: "net.VBUS", pin2: "net.GND" }}
-		/>
-		<diode
-			name="D2"
-			manufacturerPartNumber="B340A-13-F"
-			footprint="sma"
-			pcbX={22}
-			pcbY={-9.5}
-			pcbRotation={90}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={11}
-			schY={-3}
-			connections={{ cathode: "net.VBUS", anode: "net.GND" }}
-		/>
+    {/* Output capacitors are rated above the highest 12 V PDO. */}
+    <RVT1E101M0607
+      name="C4"
+      maxVoltageRating="25V"
+      polarized
+      pcbX={40}
+      pcbY={-20}
+      pcbRotation={180}
+      schSheetName="pd"
+      schSectionName="pd_output"
+      schX={7}
+      schY={3}
+      connections={{ pin1: "net.VBUS_OUT", pin2: "net.GND" }}
+    />
+    <resistor
+      name="R2"
+      resistance="0ohm"
+      manufacturerPartNumber="0603WAF0000T5E"
+      supplierPartNumbers={{ jlcpcb: ["C21189"] }}
+      footprint="res0603"
+      pcbX={47}
+      pcbY={-27}
+      schSheetName="pd"
+      schSectionName="pd_output"
+      schX={10}
+      schY={-2}
+      connections={{ pin1: "net.USB_SHIELD", pin2: "net.GND" }}
+    />
+    <capacitor
+      name="C5"
+      capacitance="100nF"
+      maxVoltageRating="50V"
+      manufacturerPartNumber="CC0603KRX7R9BB104"
+      supplierPartNumbers={{ jlcpcb: ["C14663"] }}
+      footprint="cap0603"
+      pcbX={49}
+      pcbY={-4}
+      schSheetName="pd"
+      schSectionName="pd_output"
+      schX={9}
+      schY={3}
+      connections={{ pin1: "net.VBUS_OUT", pin2: "net.GND" }}
+    />
+    <TYPE_C_31_M_12
+      name="J2"
+      pcbX={51}
+      pcbY={-15}
+      pcbRotation={90}
+      schSheetName="pd"
+      schSectionName="pd_output"
+      schX={11}
+      schY={1}
+      connections={{
+        CC1: "net.CC1",
+        CC2: "net.CC2",
+        DP1: "net.USB_DP",
+        DP2: "net.USB_DP",
+        DN1: "net.USB_DM",
+        DN2: "net.USB_DM",
+        GND1: "net.GND",
+        GND2: "net.GND",
+        SH1: "net.USB_SHIELD",
+        SH2: "net.USB_SHIELD",
+        SH3: "net.USB_SHIELD",
+        SH4: "net.USB_SHIELD",
+      }}
+      noConnect={["SBU1", "SBU2"]}
+    />
 
-		<TYPE_C_31_M_12
-			name="J2"
-			pcbX={25}
-			pcbY={0}
-			pcbRotation={90}
-			schSheetName="pd"
-			schSectionName="pd_source"
-			schX={12}
-			schY={0}
-			connections={{
-				VBUS1: "net.VBUS",
-				VBUS2: "net.VBUS",
-				CC1: "net.CC1",
-				CC2: "net.CC2",
-				GND1: "net.GND",
-				GND2: "net.GND",
-				SH1: "net.GND",
-				SH2: "net.GND",
-				SH3: "net.GND",
-				SH4: "net.GND",
-			}}
-			noConnect={["DP1", "DN1", "DP2", "DN2", "SBU1", "SBU2"]}
-		/>
+    {/* Ground copper is restricted to the isolated low-voltage side. */}
+    <copperpour
+      name="ISOLATED_GND_BOTTOM"
+      layer="bottom"
+      connectsTo="net.GND"
+      padMargin="0.2mm"
+      traceMargin="0.15mm"
+      outline={[{ x: 24, y: -28 }, { x: 54, y: -28 }, { x: 54, y: 28 }, { x: 24, y: 28 }]}
+    />
 
-		<silkscreentext text="GND" pcbX={-25.5} pcbY={6.7} fontSize="0.75mm" />
-		<silkscreentext text="+12V" pcbX={-25.5} pcbY={-6.3} fontSize="0.75mm" />
-		<silkscreentext text="J1" pcbX={-28.5} pcbY={0.2} fontSize="0.8mm" />
-		<silkscreentext text="12V DC IN" pcbX={-23.5} pcbY={11.8} fontSize="0.9mm" />
-		<silkscreentext text="USB-C PD OUT" pcbX={24} pcbY={11.8} fontSize="0.8mm" />
-		<silkscreentext text="5V/3A  9V/2A" pcbX={4} pcbY={11.5} fontSize="0.8mm" />
-	</board>
-);
+    {/* Mains and power paths use deliberate copper widths. */}
+    <trace from=".J1 > .L" to=".F1 > .pin1" width="0.8mm" maxViaCount={0} />
+    <trace from=".F1 > .pin2" to=".U1 > .AC1" width="0.8mm" maxViaCount={0} />
+    <trace from=".J1 > .N" to=".U1 > .AC2" width="0.8mm" maxViaCount={0} />
+    <trace from=".U1 > .VOUT_15V" to=".C1 > .pin1" width="1.5mm" maxViaCount={0} />
+    <trace from=".U1 > .GND" to=".C1 > .pin2" width="1.5mm" maxViaCount={0} />
+    <trace from=".C1 > .pin1" to=".U2 > .VIN" width="1.2mm" maxViaCount={0} />
+    <trace from=".U2 > .SW" to=".L1 > .pin1" width="1.2mm" maxViaCount={0} />
+    <trace from=".L1 > .pin2" to=".C4 > .pin1" width="1.5mm" maxViaCount={0} />
+    <trace from=".C4 > .pin1" to=".J2 > .VBUS1" width="1.2mm" maxViaCount={0} />
+    <trace from=".C4 > .pin1" to=".J2 > .VBUS2" width="1.2mm" maxViaCount={0} />
+    <trace from=".C4 > .pin2" to=".J2 > .GND1" width="1.2mm" maxViaCount={1} />
+    <trace from=".U2 > .CC1" to=".J2 > .CC1" width="0.2mm" maxViaCount={0} />
+    <trace from=".U2 > .CC2" to=".J2 > .CC2" width="0.2mm" maxViaCount={0} />
+    <trace from=".U2 > .DP" to=".J2 > .DP1" width="0.2mm" maxViaCount={0} />
+    <trace from=".U2 > .DM" to=".J2 > .DN1" width="0.2mm" maxViaCount={0} />
 
-export default UsbCPd20WCharger;
+    <silkscreentext text="DANGER: MAINS INPUT" pcbX={-43} pcbY={28} fontSize="0.8mm" />
+    <silkscreentext text="HLK-20M15C ISOLATED MODULE" pcbX={-8} pcbY={-8} fontSize="0.75mm" />
+    <silkscreentext text="ISOLATED 15V" pcbX={28} pcbY={27} fontSize="0.7mm" />
+    <silkscreentext text="USB-C PD OUT" pcbX={46} pcbY={-25} fontSize="0.75mm" />
+    <silkscreentext text="5V/3A  9V/2A  12V/1.5A" pcbX={42} pcbY={-28} fontSize="0.65mm" />
+  </board>
+)
+
+export const UsbCPd18WCharger = UsbCPd18WWallCharger
+export default UsbCPd18WWallCharger
