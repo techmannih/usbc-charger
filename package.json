@@ -7,16 +7,19 @@
     "tscircuit": "^0.0.2297",
     "typescript": "^5.9.3"
   },
-  "description": "Orderable module-based 85-265 VAC isolated USB-C PD 18 W wall-charger prototype in tscircuit",
+  "description": "Safety-hardened engineering prototype for an isolated USB-C PD 18 W mains adapter in tscircuit",
   "private": true,
   "scripts": {
     "dev": "tsci dev",
     "build": "tsci build index.circuit.tsx",
+    "build:preview": "tsci build --pcb-png --schematic-png --3d-png index.circuit.tsx",
+    "build:handoff": "tsci build --kicad-project-zip --step --glbs index.circuit.tsx",
     "snapshot": "tsci snapshot index.circuit.tsx",
     "snapshot:update": "tsci snapshot index.circuit.tsx --update",
     "snapshot:3d": "tsci snapshot index.circuit.tsx --3d --camera-preset top-center-angled",
     "snapshot:3d:update": "tsci snapshot index.circuit.tsx --3d --update --camera-preset top-center-angled",
     "typecheck": "tsc --noEmit",
+    "verify": "bun run typecheck && tsci check netlist && tsci check schematic-placement && tsci check placement && tsci check shorts && tsci build index.circuit.tsx",
     "start": "tsci dev"
   }
 }

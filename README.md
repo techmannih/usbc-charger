@@ -1,109 +1,87 @@
-# 18 W USB-C PD Wall Charger
+# 18 W USB-C PD charger — engineering validation design
 
-This is now the adapter architecture requested: mains goes in through `J1`, and the only USB connector (`J2`) is a USB-C **output** for a C-to-C cable.
+This repository contains a safety-hardened **engineering prototype**, not a certified consumer charger. It accepts mains through a cable/terminal input and provides a USB-C source output. Do not connect it to mains or a phone until a qualified safety engineer has reviewed the assembled board and the complete closed enclosure.
 
 ```text
-85-265 VAC
-   |
-J1 + time-delay mains fuse
-   |
-Hi-Link HLK-20M15C isolated AC/DC module
-   | 15 V isolated DC
-IP6520 autonomous USB-PD buck source
-   |
-USB-C output: 5 V / 3 A, 9 V / 2 A, 12 V / 1.5 A
+100–240 VAC product rating (85–265 VAC module operating range)
+  → 2 A time-delay fuse
+  → MOV surge clamp + NTC inrush limiter
+  → two-line common-mode choke + 305 VAC X2 capacitor/bleeders
+  → HLK-20M15C isolated 15 V / 20 W AC/DC module
+  → 15 V TVS
+  → IP6520 buck/USB-PD source
+  → 12 V VBUS TVS + CC/D+/D− ESD clamps
+  → USB-C: 5 V / 3 A, 9 V / 2 A, 12 V / 1.5 A (18 W maximum)
 ```
 
-There is no USB-C input, no custom flyback transformer and no controller firmware to flash. The maximum advertised output is 18 W; PPS is not enabled on the selected plain `IP6520` variant.
+The selected plain IP6520 variant advertises fixed PDOs; this design does not claim PPS. There is no USB-C input and no application firmware to flash.
 
-`J1` is still a two-pin screw terminal, so this PCB does not plug directly into a wall socket by itself. A rated insulated mains lead/plug, strain relief and flame-retardant touch-safe enclosure are required.
+## Safety provisions now in the design
 
-## What changed
+- Fused line input, 300 VAC MOV surge suppression and a 5 Ω NTC inrush limiter.
+- Two-line 10 mH common-mode choke, a safety-rated 100 nF/305 VAC X2 capacitor and two series bleeder resistors.
+- Encapsulated isolated AC/DC module instead of an undocumented custom flyback transformer.
+- An 8 mm, all-copper-layer keepout corridor between primary and SELV circuitry.
+- Separate secondary-only ground pour; no protective-earth assumption (Class II construction must be assessed as a complete product).
+- 15 V input and 12 V USB-VBUS TVS protection, plus low-capacitance clamps on CC1, CC2, D+ and D−.
+- Explicit power trace widths, exposed-pad ground vias, mounting holes and isolated-side test points.
+- Mains hazard, product rating and `ENGINEERING SAMPLE - NOT CERTIFIED` markings.
+- A parametric FDM shell and connector apertures for mechanical fit checking only.
 
-The earlier custom DER-628-style power stage was not orderable as drawn because its transformer and EMI chokes required custom magnetics. It has been replaced as a complete power architecture rather than swapping in electrically incompatible generic coils.
+The FDM shell is **not** a production fire enclosure. The final product needs lab-reviewed flame-retardant material, inaccessible live parts, approved cable entry/strain relief, adequate internal spacings, secure standoffs and production tooling. A standalone fit-check source is included at [mechanical/enclosure-fit-check.scad](mechanical/enclosure-fit-check.scad); see [ENCLOSURE_REQUIREMENTS.md](ENCLOSURE_REQUIREMENTS.md) before using it.
 
-- Old custom `T1` flyback transformer: removed.
-- Old custom `L1` and `L2` common-mode chokes: removed.
-- Old `INN3264C`, synchronous rectifier and `DZ2S100M0L` (`D3`) bias network: removed with the flyback stage.
-- Old programmable `CYPD3175`, SWD `J3` pads and firmware profile: removed.
-- `U1`: orderable Hi-Link `HLK-20M15C`, which provides the isolated 15 V AC/DC stage and has a working exact JLC CAD model.
-- `U2`: orderable Injoinic `IP6520`, which autonomously negotiates USB-C/PD and performs the buck conversion.
-- New `L1`: an orderable 22 uH / 16 A, 8 mOhm buck inductor; this reference no longer means a common-mode choke and meets the IP6520 reference circuit's sub-12 mOhm DCR guidance.
-- `F1`: orderable 2 A / 250 V slow-blow SMD fuse, selected instead of the unavailable `37013150410`. The rating/type follows Hi-Link's external-fuse recommendation for the 20 W module family.
-
-The 15 V module was selected rather than a 12 V module so the buck converter has regulation headroom for its 12 V PDO under load.
-
-## Orderable BOM
+## Safety-critical BOM
 
 | Ref | Manufacturer part | JLCPCB/LCSC | Function |
 | --- | --- | --- | --- |
-| J1 | WJ500V-5.08-2P | C8465 | AC line/neutral screw terminal |
-| F1 | SCT1032T2A250V | C19712562 | slow-blow mains fuse, 2 A / 250 V |
-| U1 | Hi-Link HLK-20M15C | C52746093 | encapsulated 85-265 VAC to 15 V / 1.33 A, 20 W module |
-| C1 | RVE100UF35V67RV0072 | C2836437 | 100 uF / 35 V isolated-input bulk capacitor |
-| C2, C5 | CC0603KRX7R9BB104 | C14663 | 100 nF / 50 V X7R bypass capacitors |
-| U2 | Injoinic IP6520 | C7433861 | autonomous USB-C/PD buck source controller |
-| C3 | GRM188Z71E225KE43D | C415535 | 2.2 uF / 25 V bootstrap capacitor |
-| L1 | PDMTAT068125-220MLU | C3011539 | 22 uH / 16 A, 8 mOhm buck inductor |
-| R1 | FRC0603F2R00TS | C2933191 | 2 ohm switch-node snubber resistor |
-| C6 | GRM1885C1H102JA01D | C77026 | 1 nF / 50 V C0G snubber capacitor |
-| C4 | RVT1E101M0607 | C72477 | 100 uF / 25 V USB VBUS bulk capacitor |
-| R2 | 0603WAF0000T5E | C21189 | 0 ohm USB shell-to-ground link |
-| J2 | TYPE-C-31-M-12 | C165948 | USB-C output receptacle |
+| J1 | WJ500V-5.08-2P | C8465 | Internal AC line/neutral termination |
+| F1 | SCT1032T2A250V | C19712562 | 2 A / 250 V time-delay mains fuse |
+| RV1 | Bourns MOV-14D471K | C1527439 | 300 VAC MOV surge clamp |
+| TH1 | MF72 5D9 | C11277 | 5 Ω / 3 A NTC inrush limiter |
+| LCM1 | XRSQ1010-10mH-H | C5380257 | 10 mH / 1.2 A two-line common-mode choke |
+| C7 | TDK B32922C3104M189 | C125429 | 100 nF / 305 VAC class-X2 capacitor |
+| R3, R4 | 1206W4F1004T5E | C17927 | Series 1 MΩ / 200 V X-capacitor bleeders |
+| U1 | Hi-Link HLK-20M15C | C52746093 | 85–265 VAC to isolated 15 V / 1.33 A module |
+| D1 | ST SMBJ15A | C83846 | 15 V rail TVS |
+| U2 | Injoinic IP6520 | C7433861 | Autonomous USB-C/PD buck source controller |
+| L1 | PDMTAT068125-220MLU | C3011539 | 22 µH / 16 A buck inductor |
+| D2 | SMBJ13A | C19077567 | USB VBUS TVS |
+| D3–D6 | PESD5V0H1BSF | C477989 | CC and USB 2.0 data ESD protection |
+| J2 | TYPE-C-31-M-12 | C165948 | USB-C source receptacle |
 
-The special/mechanical parts use exact JLCPCB imports with their catalog footprint and CAD model. Ordinary 0603 passives use tscircuit built-ins and Footprinter footprints, while retaining exact manufacturer and supplier part numbers.
+Other power-stage values follow the IP6520 reference application: 100 µF + 100 nF on 15 V input, 2.2 µF bootstrap capacitor, 22 µH inductor, 100 µF + 100 nF on VBUS and a 2 Ω/1 nF switch-node snubber.
 
-Catalog availability does not guarantee that every through-hole/mixed-technology part will be assembled by a particular JLCPCB service. `U1`, `L1` and `J1` may need manual or through-hole assembly; check live stock and assembly capability before ordering.
+Supplier catalogue availability is not an assembly guarantee. Incoming inspection must confirm exact manufacturer, marking, rating and current approval evidence for every safety-critical lot; substitutions require engineering and lab review.
 
-## Electrical implementation
+## Build and checks
 
-The IP6520 application follows the component values in its reference circuit:
-
-- 100 uF / 35 V plus 100 nF at `VIN`
-- 2.2 uF from `BST` to `SW`
-- 22 uH power inductor from `SW` to `VBUS_OUT`
-- 100 uF / 25 V plus 100 nF on USB VBUS
-- 2 ohm + 1 nF series snubber from `SW` to ground
-- direct CC1, CC2, D+ and D- routing to the USB-C receptacle
-- exposed-pad ground vias and a secondary-side bottom ground pour
-
-Power and mains routes have explicit wide traces. The isolated ground pour is restricted to the low-voltage side and does not enter the mains area.
-
-## Production status and safety
-
-This is a **prototype design, not a finished or certified consumer charger**. Using an approved encapsulated AC/DC module removes the custom-transformer manufacturing problem, but the approvals of that module do not automatically certify this PCB or the final adapter.
-
-Before connecting a phone or mains power, the finished product still needs qualified review and testing for:
-
-- fuse coordination and abnormal/fault conditions
-- creepage, clearance, dielectric strength and touch current
-- surge, EFT, ESD and conducted/radiated EMI
-- output short-circuit and attach/detach behavior
-- 5 V, 9 V and 12 V PD negotiation with a protocol analyzer
-- regulation and thermal rise at 18 W in the final closed enclosure
-- plug, cable, strain-relief and fire-enclosure compliance
-
-Do not touch or probe the energized board. First power-up must be performed by a qualified person in an enclosed, current-limited, fused test fixture.
-
-## Verification
-
-Run:
+Install dependencies, then run:
 
 ```sh
-bun run typecheck
-bunx tsci check netlist
-bunx tsci check shorts
-bunx tsci check placement
-bun run build
+bun install
+bun run verify
+bun run build:preview
+bun run build:handoff
 ```
 
-The generated checks validate CAD connectivity, shorts and placement. They do not substitute for USB-PD protocol, electrical-safety, EMI or thermal laboratory tests.
+Outputs are written under `dist/index/`. CAD checks validate connectivity, overlap, placement and routing consistency; they do not establish electrical safety, USB compliance, EMC performance or thermal margin.
 
-## References
+## Certification handoff
 
-- [Hi-Link HLK-20M15 family product page](https://www.hlktech.net/index.php?cateid=734&id=128)
-- [Hi-Link 20 W module datasheet](https://h.hlktech.com/download/ACDC%E7%94%B5%E6%BA%90%E6%A8%A1%E5%9D%9720W%E7%B3%BB%E5%88%97/1/%E6%B5%B7%E5%87%8C%E7%A7%9120W%E7%B3%BB%E5%88%97%E7%94%B5%E6%BA%90%E6%A8%A1%E5%9D%97%E8%A7%84%E6%A0%BC%E4%B9%A6V1.6.pdf)
-- [LCSC IP6520 product page](https://www.lcsc.com/product-detail/Power-Management-Specialized_Injoinic-IP6520_C7433861.html)
-- [IP6520 datasheet](https://datasheet.lcsc.com/datasheet/pdf/70dbddfbb53d72ec382491598ecf443f.pdf?productCode=C7433861)
-- [LCSC PDMTAT068125-220MLU product page](https://www.lcsc.com/product-detail/C3011539.html)
-- [Power Integrations DER-628 report](https://www.power.com/sites/default/files/documents/der-628_18watt_usb_pd_charger_using_innoswitch3-cp_and_cypress_controller.pdf) — retained only as background for why the previous custom-magnetics approach could not use a generic drop-in transformer
+- [COMPLIANCE_PLAN.md](COMPLIANCE_PLAN.md) maps the intended product to current India and USB-IF workstreams and records what remains unproven.
+- [LAB_VALIDATION_PLAN.md](LAB_VALIDATION_PLAN.md) is the controlled test and evidence checklist for an accredited lab.
+- [ENCLOSURE_REQUIREMENTS.md](ENCLOSURE_REQUIREMENTS.md) defines the mechanical safety requirements for the production enclosure.
+- [DESIGN_RISK_REGISTER.md](DESIGN_RISK_REGISTER.md) records residual risks and release gates.
+
+India's current BIS compulsory-registration material lists power adaptors for IT equipment under IS 13252 (Part 1):2010; the lab and certification body must confirm the exact applicable edition/amendments and product classification when the application is opened. USB-IF certification is a separate process requiring the applicable USB Type-C/PD compliance tests and a valid TID/listing.
+
+## Primary references
+
+- [BIS products under compulsory registration](https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/)
+- [BIS uniform test report format for power adaptors](https://www.bis.gov.in/PDF/UTRFs/FINALIZED_TRF_IS_13252_A1_A2_Power_Adaptor_for_IT_Equipment_V1_3.pdf)
+- [USB-IF USB Type-C and USB Power Delivery compliance overview](https://www.usb.org/usbc)
+- [USB-IF compliance program](https://www.usb.org/compliance)
+- [Hi-Link 20 W module product page](https://www.hlktech.net/index.php?cateid=734&id=128)
+- [Injoinic IP6520 datasheet](https://www.injoinic.com/api/static/uploads/20250529/20250529105252_6837cc049d55b.pdf)
+- [TDK B32922C3104M189 X2 capacitor](https://product.tdk.com/en/search/capacitor/film/emi-suppression/info?part_no=B32922C3104M189)
+- [Bourns MOV-14D series datasheet](https://www.bourns.com/docs/Product-Datasheets/MOV14D.pdf)
