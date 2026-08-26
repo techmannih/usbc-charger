@@ -1,87 +1,189 @@
-# 18 W USB-C PD charger — engineering validation design
+# USB-C PD 18 W AC Wall Charger
 
-This repository contains a safety-hardened **engineering prototype**, not a certified consumer charger. It accepts mains through a cable/terminal input and provides a USB-C source output. Do not connect it to mains or a phone until a qualified safety engineer has reviewed the assembled board and the complete closed enclosure.
+A complete tscircuit design for an isolated AC-mains to USB-C Power Delivery charger. The board accepts a nominal 100–240 VAC input and provides fixed 5 V, 9 V, and 12 V USB-PD outputs up to 18 W.
+
+The design combines mains protection, EMI filtering, an encapsulated AC/DC module, a USB-PD buck stage, secondary-side transient protection, PCB layout, and a mechanical fit-check enclosure in one TypeScript project.
+
+![3D view of the assembled charger PCB](__snapshots__/index.circuit-3d.snap.png)
+
+## At a glance
+
+| Item | Specification |
+| --- | --- |
+| Product input rating | 100–240 VAC, 50/60 Hz |
+| AC/DC module operating range | 85–265 VAC |
+| USB-C output profiles | 5 V / 3 A, 9 V / 2 A, 12 V / 1.5 A |
+| Maximum advertised output | 18 W |
+| Isolated supply | HLK-20M15C, 15 V / 20 W |
+| USB-PD controller | Injoinic IP6520 |
+| PCB | 110 × 60 mm, 2-layer, 1.6 mm FR-4 |
+| Isolation layout | 8 mm primary-to-SELV all-layer copper keepout |
+| Enclosure model | 116 × 66 × 42 mm fit-check shell |
+| Firmware | None; the selected IP6520 advertises fixed PDOs |
+
+This implementation does not advertise PPS and is not a USB-C input/sink design.
+
+## Power architecture
 
 ```text
-100–240 VAC product rating (85–265 VAC module operating range)
-  → 2 A time-delay fuse
-  → MOV surge clamp + NTC inrush limiter
-  → two-line common-mode choke + 305 VAC X2 capacitor/bleeders
-  → HLK-20M15C isolated 15 V / 20 W AC/DC module
-  → 15 V TVS
-  → IP6520 buck/USB-PD source
-  → 12 V VBUS TVS + CC/D+/D− ESD clamps
-  → USB-C: 5 V / 3 A, 9 V / 2 A, 12 V / 1.5 A (18 W maximum)
+AC line / neutral
+  │
+  ├─ F1      2 A time-delay fuse
+  ├─ RV1     300 VAC MOV surge clamp
+  ├─ TH1     5 Ω NTC inrush limiter
+  ├─ LCM1    two-line common-mode choke
+  ├─ C7      305 VAC X2 capacitor with R3/R4 bleeders
+  │
+  └─ U1      HLK-20M15C isolated 15 V AC/DC module
+       │
+       ├─ D1 15 V rail TVS
+       │
+       └─ U2 IP6520 synchronous buck + USB-PD source
+            ├─ L1/C4/C5 output power stage
+            ├─ D2 USB VBUS TVS
+            ├─ D3–D6 CC and USB 2.0 ESD protection
+            │
+            └─ J2 USB-C output
+                 ├─ 5 V / 3 A
+                 ├─ 9 V / 2 A
+                 └─ 12 V / 1.5 A
 ```
 
-The selected plain IP6520 variant advertises fixed PDOs; this design does not claim PPS. There is no USB-C input and no application firmware to flash.
+### Mains input and filtering
 
-## Safety provisions now in the design
+The AC input enters through `J1`. The line conductor is protected by a time-delay fuse, MOV, and NTC before passing through the common-mode choke. A safety-rated X2 capacitor filters line-to-neutral noise, while two series bleeder resistors discharge it after disconnection.
 
-- Fused line input, 300 VAC MOV surge suppression and a 5 Ω NTC inrush limiter.
-- Two-line 10 mH common-mode choke, a safety-rated 100 nF/305 VAC X2 capacitor and two series bleeder resistors.
-- Encapsulated isolated AC/DC module instead of an undocumented custom flyback transformer.
-- An 8 mm, all-copper-layer keepout corridor between primary and SELV circuitry.
-- Separate secondary-only ground pour; no protective-earth assumption (Class II construction must be assessed as a complete product).
-- 15 V input and 12 V USB-VBUS TVS protection, plus low-capacitance clamps on CC1, CC2, D+ and D−.
-- Explicit power trace widths, exposed-pad ground vias, mounting holes and isolated-side test points.
-- Mains hazard, product rating and `ENGINEERING SAMPLE - NOT CERTIFIED` markings.
-- A parametric FDM shell and connector apertures for mechanical fit checking only.
+The filtered mains input feeds the encapsulated `HLK-20M15C`. Using a bought-out isolated module keeps the carrier board focused on input protection, physical separation, and the low-voltage USB-PD stage instead of implementing a custom offline flyback converter.
 
-The FDM shell is **not** a production fire enclosure. The final product needs lab-reviewed flame-retardant material, inaccessible live parts, approved cable entry/strain relief, adequate internal spacings, secure standoffs and production tooling. A standalone fit-check source is included at [mechanical/enclosure-fit-check.scad](mechanical/enclosure-fit-check.scad); see [ENCLOSURE_REQUIREMENTS.md](ENCLOSURE_REQUIREMENTS.md) before using it.
+### Isolated USB-PD output
 
-## Safety-critical BOM
+The module's isolated 15 V output is locally bypassed and protected by `D1`. The `IP6520` then performs synchronous buck conversion and USB-PD source negotiation. Its switch node drives a 22 µH inductor, output capacitors, and the USB-C VBUS rail.
 
-| Ref | Manufacturer part | JLCPCB/LCSC | Function |
+The USB side includes a dedicated VBUS TVS, individual low-capacitance clamps for CC1, CC2, D+, and D−, and test points for 15 V, ground, and VBUS measurements.
+
+## PCB and mechanical design
+
+- Primary-side AC parts are grouped on the left; the isolated USB-PD stage is on the right.
+- An 8 mm copper-free corridor spans both copper layers between the primary and SELV regions.
+- The ground pour is restricted to the isolated low-voltage side.
+- Mains and power paths use explicitly assigned trace widths and controlled via counts.
+- Four 3.2 mm non-plated mounting holes provide fixed enclosure mounting points.
+- The USB-C receptacle and mains entry include enclosure aperture definitions.
+- The included FDM enclosure is a volume and connector-alignment model, not a production housing.
+
+PCB and schematic snapshots are available in [`__snapshots__/`](__snapshots__). The standalone enclosure fit-check model is in [`mechanical/enclosure-fit-check.scad`](mechanical/enclosure-fit-check.scad).
+
+## Key components
+
+| Ref | Part | Function | JLCPCB/LCSC |
 | --- | --- | --- | --- |
-| J1 | WJ500V-5.08-2P | C8465 | Internal AC line/neutral termination |
-| F1 | SCT1032T2A250V | C19712562 | 2 A / 250 V time-delay mains fuse |
-| RV1 | Bourns MOV-14D471K | C1527439 | 300 VAC MOV surge clamp |
-| TH1 | MF72 5D9 | C11277 | 5 Ω / 3 A NTC inrush limiter |
-| LCM1 | XRSQ1010-10mH-H | C5380257 | 10 mH / 1.2 A two-line common-mode choke |
-| C7 | TDK B32922C3104M189 | C125429 | 100 nF / 305 VAC class-X2 capacitor |
-| R3, R4 | 1206W4F1004T5E | C17927 | Series 1 MΩ / 200 V X-capacitor bleeders |
-| U1 | Hi-Link HLK-20M15C | C52746093 | 85–265 VAC to isolated 15 V / 1.33 A module |
-| D1 | ST SMBJ15A | C83846 | 15 V rail TVS |
-| U2 | Injoinic IP6520 | C7433861 | Autonomous USB-C/PD buck source controller |
-| L1 | PDMTAT068125-220MLU | C3011539 | 22 µH / 16 A buck inductor |
-| D2 | SMBJ13A | C19077567 | USB VBUS TVS |
-| D3–D6 | PESD5V0H1BSF | C477989 | CC and USB 2.0 data ESD protection |
-| J2 | TYPE-C-31-M-12 | C165948 | USB-C source receptacle |
+| J1 | WJ500V-5.08-2P | AC line/neutral termination | C8465 |
+| F1 | SCT1032T2A250V | 2 A / 250 V time-delay fuse | C19712562 |
+| RV1 | Bourns MOV-14D471K | 300 VAC surge suppression | C1527439 |
+| TH1 | MF72 5D9 | 5 Ω / 3 A inrush limiter | C11277 |
+| LCM1 | XRSQ1010-10mH-H | 10 mH two-line common-mode choke | C5380257 |
+| C7 | TDK B32922C3104M189 | 100 nF / 305 VAC class-X2 capacitor | C125429 |
+| R3, R4 | 1206W4F1004T5E | Series X-capacitor bleeders | C17927 |
+| U1 | Hi-Link HLK-20M15C | Isolated 15 V / 20 W AC/DC module | C52746093 |
+| D1 | SMBJ15A | 15 V rail TVS | C83846 |
+| U2 | Injoinic IP6520 | USB-PD buck source controller | C7433861 |
+| L1 | PDMTAT068125-220MLU | 22 µH buck inductor | C3011539 |
+| D2 | SMBJ13A | USB VBUS TVS | C19077567 |
+| D3–D6 | PESD5V0H1BSF | CC and USB 2.0 ESD protection | C477989 |
+| J2 | TYPE-C-31-M-12 | USB-C receptacle | C165948 |
 
-Other power-stage values follow the IP6520 reference application: 100 µF + 100 nF on 15 V input, 2.2 µF bootstrap capacitor, 22 µH inductor, 100 µF + 100 nF on VBUS and a 2 Ω/1 nF switch-node snubber.
+The supplier IDs are included for design reproducibility, not as an approval of substitutions or a guarantee of stock. Verify the exact manufacturer, rating, footprint, and safety documentation before assembly.
 
-Supplier catalogue availability is not an assembly guarantee. Incoming inspection must confirm exact manufacturer, marking, rating and current approval evidence for every safety-critical lot; substitutions require engineering and lab review.
+## Repository structure
 
-## Build and checks
+```text
+.
+├── index.circuit.tsx              Main tscircuit source and board layout
+├── index.circuit.circuit.json     Generated circuit consumed by viewers/tools
+├── imports/                       Custom component and footprint definitions
+├── __snapshots__/                 Schematic, PCB, and 3D reference renders
+├── mechanical/                    Enclosure fit-check source
+├── COMPLIANCE_PLAN.md             Certification planning and evidence gaps
+├── LAB_VALIDATION_PLAN.md         Hardware test plan
+├── ENCLOSURE_REQUIREMENTS.md      Production enclosure requirements
+└── DESIGN_RISK_REGISTER.md        Known risks and release gates
+```
 
-Install dependencies, then run:
+## Getting started
+
+The project uses [Bun](https://bun.sh/) and the tscircuit CLI included in the development dependencies.
 
 ```sh
+git clone https://github.com/techmannih/usbc-charger.git
+cd usbc-charger
 bun install
-bun run verify
-bun run build:preview
-bun run build:handoff
+bun run dev
 ```
 
-Outputs are written under `dist/index/`. CAD checks validate connectivity, overlap, placement and routing consistency; they do not establish electrical safety, USB compliance, EMC performance or thermal margin.
+`bun run dev` opens the interactive tscircuit development viewer. The default circuit entrypoint is [`index.circuit.tsx`](index.circuit.tsx).
 
-## Certification handoff
+## Commands
 
-- [COMPLIANCE_PLAN.md](COMPLIANCE_PLAN.md) maps the intended product to current India and USB-IF workstreams and records what remains unproven.
-- [LAB_VALIDATION_PLAN.md](LAB_VALIDATION_PLAN.md) is the controlled test and evidence checklist for an accredited lab.
-- [ENCLOSURE_REQUIREMENTS.md](ENCLOSURE_REQUIREMENTS.md) defines the mechanical safety requirements for the production enclosure.
-- [DESIGN_RISK_REGISTER.md](DESIGN_RISK_REGISTER.md) records residual risks and release gates.
+| Command | Purpose |
+| --- | --- |
+| `bun run dev` | Start the interactive local viewer |
+| `bun run typecheck` | Check the TypeScript source |
+| `bun run build` | Rebuild `index.circuit.circuit.json` from the TSX source |
+| `bun run verify` | Run type, netlist, schematic placement, PCB placement, shorts, and build checks |
+| `bun run build:preview` | Generate PCB, schematic, and 3D preview images |
+| `bun run snapshot:update` | Update committed PCB and schematic snapshots |
+| `bun run snapshot:3d:update` | Update the committed angled 3D snapshot |
+| `bun run build:handoff` | Generate KiCad, STEP, and GLB handoff outputs |
 
-India's current BIS compulsory-registration material lists power adaptors for IT equipment under IS 13252 (Part 1):2010; the lab and certification body must confirm the exact applicable edition/amendments and product classification when the application is opened. USB-IF certification is a separate process requiring the applicable USB Type-C/PD compliance tests and a valid TID/listing.
+Generated export files are written under `dist/index/`.
 
-## Primary references
+## Development workflow
 
-- [BIS products under compulsory registration](https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/)
-- [BIS uniform test report format for power adaptors](https://www.bis.gov.in/PDF/UTRFs/FINALIZED_TRF_IS_13252_A1_A2_Power_Adaptor_for_IT_Equipment_V1_3.pdf)
-- [USB-IF USB Type-C and USB Power Delivery compliance overview](https://www.usb.org/usbc)
-- [USB-IF compliance program](https://www.usb.org/compliance)
-- [Hi-Link 20 W module product page](https://www.hlktech.net/index.php?cateid=734&id=128)
+After changing the circuit source or a component definition:
+
+```sh
+bun run verify
+bun run snapshot:update
+bun run snapshot:3d:update
+git diff -- index.circuit.circuit.json __snapshots__
+```
+
+Commit `index.circuit.circuit.json` whenever the TSX circuit changes. Hosted viewers and downstream tools can consume this generated file; leaving it stale can make a deployed board differ from the local `tsci dev` render.
+
+Before opening a hardware or manufacturing handoff, inspect the schematic, PCB, 3D assembly, generated circuit JSON, and check outputs together.
+
+## Design status
+
+The repository contains a complete engineering design and CAD workflow, but it is not a certified consumer product. Automated CAD checks establish source consistency; they do not prove electrical safety, EMC performance, thermal margin, enclosure safety, or USB-IF compliance.
+
+The remaining physical work includes:
+
+- prototype assembly and incoming-part verification;
+- USB-PD protocol and load testing across every advertised PDO;
+- efficiency, ripple, thermal-rise, and abnormal-condition testing;
+- surge, EFT, ESD, conducted/radiated emissions, and immunity testing;
+- creepage, clearance, dielectric-strength, leakage, and accessible-part evaluation;
+- validation inside the final flame-retardant enclosure with the production cord and strain relief.
+
+See the project handoff documents for detailed requirements:
+
+- [`COMPLIANCE_PLAN.md`](COMPLIANCE_PLAN.md)
+- [`LAB_VALIDATION_PLAN.md`](LAB_VALIDATION_PLAN.md)
+- [`ENCLOSURE_REQUIREMENTS.md`](ENCLOSURE_REQUIREMENTS.md)
+- [`DESIGN_RISK_REGISTER.md`](DESIGN_RISK_REGISTER.md)
+
+## Safety notice
+
+This board contains hazardous mains voltage. Do not energize an exposed PCB, connect it to a phone, or treat the fit-check enclosure as a finished product. Mains testing and enclosure review must be performed with appropriate equipment by qualified personnel.
+
+The final product requires verified safety-critical parts, a rated cable and plug, independent strain relief, inaccessible live parts, preserved creepage and clearance, a suitable flame-retardant enclosure, and approval under the standards applicable to the target market.
+
+## Design references
+
+- [Hi-Link HLK-20M15C product page](https://www.hlktech.net/index.php?cateid=734&id=128)
 - [Injoinic IP6520 datasheet](https://www.injoinic.com/api/static/uploads/20250529/20250529105252_6837cc049d55b.pdf)
 - [TDK B32922C3104M189 X2 capacitor](https://product.tdk.com/en/search/capacitor/film/emi-suppression/info?part_no=B32922C3104M189)
 - [Bourns MOV-14D series datasheet](https://www.bourns.com/docs/Product-Datasheets/MOV14D.pdf)
+- [USB-IF USB Type-C and USB Power Delivery](https://www.usb.org/usbc)
+- [USB-IF compliance program](https://www.usb.org/compliance)
+- [BIS products under compulsory registration](https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/)
