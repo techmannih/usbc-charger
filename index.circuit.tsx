@@ -3,7 +3,7 @@ import { enclosure } from "tscircuit"
 
 import { B32922C3104M189 } from "./imports/B32922C3104M189"
 import { HLK_20M15C } from "./imports/HLK_20M15C"
-import { IP6520 } from "./imports/IP6520"
+import { IP6520StandardNonPps } from "./imports/IP6520"
 import { MF72_5D9 } from "./imports/MF72_5D9"
 import { MOV_14D471K } from "./imports/MOV_14D471K"
 import { PDMTAT068125_220MLU } from "./imports/PDMTAT068125_220MLU"
@@ -18,11 +18,18 @@ import { WJ500V_5_08_2P } from "./imports/WJ500V_5_08_2P"
 import { XRSQ1010_10mH_H } from "./imports/XRSQ1010_10mH_H"
 
 /**
- * Engineering-validation 85-265 VAC to USB-C PD wall-charger prototype.
+ * Engineering prototype for an 85-265 VAC to USB-C PD wall charger.
  *
  * The encapsulated HLK-20M15C module replaces the former custom flyback,
  * transformer and EMI magnetics. IP6520 converts its isolated 15 V output to
- * fixed USB-PD profiles: 5 V / 3 A, 9 V / 2 A and 12 V / 1.5 A (18 W max).
+ * negotiated USB-PD source profiles: 5 V / 3 A, 9 V / 2 A and 12 V / 1.5 A
+ * (18 W max). The exact standard IP6520 is the non-PPS variant; other IP6520
+ * family variants are not approved substitutions.
+ *
+ * The 15 V / 1.333 A AC/DC module leaves limited conversion and thermal
+ * headroom at the 18 W USB rating. Full-load thermal/efficiency testing,
+ * including the 15 V to 12 V / 1.5 A operating point, is a hardware release
+ * gate.
  * The carrier adds fused surge, inrush and common-mode filtering plus
  * secondary TVS/ESD protection. Physical safety and compliance remain subject
  * to accredited-laboratory testing of the final enclosure and production unit.
@@ -31,7 +38,7 @@ export const UsbCPd18WWallCharger = () => (
   <>
     <board
       name="USB_C_PD_18W_WALL_CHARGER"
-      title="85-265 VAC to USB-C PD 18 W Engineering Validation Adapter"
+      title="85-265 VAC to USB-C PD 18 W Engineering Prototype"
       width="110mm"
       height="60mm"
       borderRadius="2mm"
@@ -46,7 +53,7 @@ export const UsbCPd18WWallCharger = () => (
       schMaxTraceDistance="3mm"
     >
     <schematicsheet name="mains" displayName="AC Input and Isolated AC/DC Module" sheetIndex={1} />
-    <schematicsheet name="pd" displayName="18 W USB-C PD Buck Output" sheetIndex={2} />
+    <schematicsheet name="pd" displayName="18 W USB-C PD Buck SoC Output" sheetIndex={2} />
     <schematicsection name="ac_input" displayName="Hazardous 85-265 VAC Input" />
     <schematicsection name="mains_filter" displayName="Fused Surge / Inrush / EMI Filter" />
     <schematicsection name="isolated_dc" displayName="Isolated 15 V Supply" />
@@ -182,7 +189,7 @@ export const UsbCPd18WWallCharger = () => (
       }}
     />
 
-    {/* IP6520 reference application: local input bulk and high-frequency bypass. */}
+    {/* Standard non-PPS IP6520 reference application: local input bulk and high-frequency bypass. */}
     <RVE100UF35V67RV0072
       name="C1"
       maxVoltageRating="35V"
@@ -223,7 +230,7 @@ export const UsbCPd18WWallCharger = () => (
       schWidth={0.6}
       connections={{ C: "net.VIN_15V", A: "net.GND" }}
     />
-    <IP6520
+    <IP6520StandardNonPps
       name="U2"
       pcbX={30}
       pcbY={8}
@@ -498,6 +505,7 @@ export const UsbCPd18WWallCharger = () => (
     <silkscreentext text="N" pcbX={-46} pcbY={-4} fontSize="0.8mm" />
     <silkscreentext text="HLK-20M15C ISOLATED MODULE" pcbX={-8} pcbY={-8} fontSize="0.75mm" />
     <silkscreentext text="ISOLATED 15V" pcbX={28} pcbY={27} fontSize="0.7mm" />
+    <silkscreentext text="U2 IP6520 STD / NO PPS" pcbX={34} pcbY={24} fontSize="0.6mm" />
     <silkscreentext text="USB-C PD OUT" pcbX={46} pcbY={-10} fontSize="0.75mm" />
     <silkscreentext text="5V/3A  9V/2A  12V/1.5A" pcbX={42} pcbY={-28} fontSize="0.65mm" />
     <silkscreentext text="ENGINEERING SAMPLE - NOT CERTIFIED" pcbX={18} pcbY={29} fontSize="0.65mm" />

@@ -17,17 +17,25 @@ const pinAttributes = {
   pin9: {requiresGround: true}
 } as const
 
-export const IP6520 = (props: ChipProps<typeof pinLabels>) => {
+/**
+ * Exact standard, non-PPS IP6520 ordering identity used by this design.
+ * Other IP6520 family variants provide different PDO sets and are not drop-in
+ * BOM substitutions even when their package and pinout match.
+ */
+export const IP6520_STANDARD_NON_PPS_MPN = "IP6520"
+export const IP6520_STANDARD_NON_PPS_LCSC = "C7433861"
+
+export const IP6520StandardNonPps = (props: ChipProps<typeof pinLabels>) => {
   return (
     <chip
       pinLabels={pinLabels}
       pinAttributes={pinAttributes}
       supplierPartNumbers={{
   "jlcpcb": [
-    "C7433861"
+    IP6520_STANDARD_NON_PPS_LCSC
   ]
 }}
-      manufacturerPartNumber="IP6520"
+      manufacturerPartNumber={IP6520_STANDARD_NON_PPS_MPN}
       footprint={<footprint>
         <smtpad portHints={["pin5"]} pcbX="1.905mm" pcbY="2.682494mm" width="0.6299962mm" height="1.864995mm" radius="0.3149981mm" shape="pill" />
 <smtpad portHints={["pin6"]} pcbX="0.635mm" pcbY="2.682494mm" width="0.6299962mm" height="1.864995mm" radius="0.3149981mm" shape="pill" />
@@ -54,3 +62,5 @@ export const IP6520 = (props: ChipProps<typeof pinLabels>) => {
     />
   )
 }
+
+export const IP6520 = IP6520StandardNonPps

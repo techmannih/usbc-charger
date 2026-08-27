@@ -1,6 +1,6 @@
 # USB-C PD 18 W AC Wall Charger
 
-A complete tscircuit design for an isolated AC-mains to USB-C Power Delivery charger. The board accepts a nominal 100–240 VAC input and provides fixed 5 V, 9 V, and 12 V USB-PD outputs up to 18 W.
+This repository contains the electrical and PCB design for an isolated AC-mains to USB-C Power Delivery charger. Written in tscircuit, the design accepts a nominal 100–240 VAC input and supports three negotiated output profiles: 5 V / 3 A, 9 V / 2 A, and 12 V / 1.5 A, up to 18 W.
 
 The design combines mains protection, EMI filtering, an encapsulated AC/DC module, a USB-PD buck stage, secondary-side transient protection, PCB layout, and a mechanical fit-check enclosure in one TypeScript project.
 
@@ -13,15 +13,15 @@ The design combines mains protection, EMI filtering, an encapsulated AC/DC modul
 | Product input rating | 100–240 VAC, 50/60 Hz |
 | AC/DC module operating range | 85–265 VAC |
 | USB-C output profiles | 5 V / 3 A, 9 V / 2 A, 12 V / 1.5 A |
-| Maximum advertised output | 18 W |
-| Isolated supply | HLK-20M15C, 15 V / 20 W |
-| USB-PD controller | Injoinic IP6520 |
+| Maximum USB output | 18 W |
+| Isolated supply | HLK-20M15C, 15 V / 1.333 A |
+| USB-PD buck SoC | Standard Injoinic IP6520 (non-PPS) |
 | PCB | 110 × 60 mm, 2-layer, 1.6 mm FR-4 |
 | Isolation layout | 8 mm primary-to-SELV all-layer copper keepout |
 | Enclosure model | 116 × 66 × 42 mm fit-check shell |
-| Firmware | None; the selected IP6520 advertises fixed PDOs |
+| Firmware | None; the selected IP6520 handles PD negotiation and output selection autonomously |
 
-This implementation does not advertise PPS and is not a USB-C input/sink design.
+This implementation uses the standard `IP6520` (`C7433861`) non-PPS variant and is not a USB-C input/sink design. Other IP6520 family variants provide different output profiles and are not approved BOM substitutions.
 
 ## Power architecture
 
@@ -61,6 +61,12 @@ The module's isolated 15 V output is locally bypassed and protected by `D1`. The
 
 The USB side includes a dedicated VBUS TVS, individual low-capacitance clamps for CC1, CC2, D+, and D−, and test points for 15 V, ground, and VBUS measurements.
 
+### Power and validation margin
+
+The `HLK-20M15C` is nominally rated for 15 V at 1.333 A. Buck-conversion losses leave little electrical and thermal headroom while delivering the full 18 W USB output. Full-load efficiency, input-current, regulation, and temperature-rise testing in the final closed enclosure are mandatory before retaining the 18 W rating.
+
+The IP6520 input range includes 15 V, but the datasheet's 12 V / 1.5 A electrical-characteristic point is specified with a 24 V input. The exact 15 V input to 12 V / 1.5 A output condition therefore remains a hardware-validation point. If the board cannot sustain it across mains, load, temperature, and transient limits, the 12 V PDO must be removed/derated or the power architecture revised.
+
 ## PCB and mechanical design
 
 - Primary-side AC parts are grouped on the left; the isolated USB-PD stage is on the right.
@@ -84,15 +90,15 @@ PCB and schematic snapshots are available in [`__snapshots__/`](__snapshots__). 
 | LCM1 | XRSQ1010-10mH-H | 10 mH two-line common-mode choke | C5380257 |
 | C7 | TDK B32922C3104M189 | 100 nF / 305 VAC class-X2 capacitor | C125429 |
 | R3, R4 | 1206W4F1004T5E | Series X-capacitor bleeders | C17927 |
-| U1 | Hi-Link HLK-20M15C | Isolated 15 V / 20 W AC/DC module | C52746093 |
+| U1 | Hi-Link HLK-20M15C | Isolated 15 V / 1.333 A AC/DC module | C52746093 |
 | D1 | SMBJ15A | 15 V rail TVS | C83846 |
-| U2 | Injoinic IP6520 | USB-PD buck source controller | C7433861 |
+| U2 | Injoinic IP6520 | Synchronous buck + USB-PD source SoC; standard non-PPS variant | C7433861 |
 | L1 | PDMTAT068125-220MLU | 22 µH buck inductor | C3011539 |
 | D2 | SMBJ13A | USB VBUS TVS | C19077567 |
 | D3–D6 | PESD5V0H1BSF | CC and USB 2.0 ESD protection | C477989 |
 | J2 | TYPE-C-31-M-12 | USB-C receptacle | C165948 |
 
-The supplier IDs are included for design reproducibility, not as an approval of substitutions or a guarantee of stock. Verify the exact manufacturer, rating, footprint, and safety documentation before assembly.
+The supplier IDs are included for design reproducibility, not as an approval of substitutions or a guarantee of stock. Verify the exact manufacturer, rating, footprint, and safety documentation before assembly. In particular, confirm that U2 is marked and ordered as the standard `IP6520`; do not substitute another family variant without requalifying the USB-PD profiles and power budget.
 
 ## Repository structure
 
@@ -154,12 +160,12 @@ Before opening a hardware or manufacturing handoff, inspect the schematic, PCB, 
 
 ## Design status
 
-The repository contains a complete engineering design and CAD workflow, but it is not a certified consumer product. Automated CAD checks establish source consistency; they do not prove electrical safety, EMC performance, thermal margin, enclosure safety, or USB-IF compliance.
+The repository contains the CAD source and engineering workflow for a hardware prototype. It is not a validated or certified consumer product. Automated CAD checks establish source consistency; they do not prove electrical safety, EMC performance, thermal margin, enclosure safety, or USB-IF compliance.
 
 The remaining physical work includes:
 
 - prototype assembly and incoming-part verification;
-- USB-PD protocol and load testing across every advertised PDO;
+- USB-PD protocol and load testing across every supported PDO;
 - efficiency, ripple, thermal-rise, and abnormal-condition testing;
 - surge, EFT, ESD, conducted/radiated emissions, and immunity testing;
 - creepage, clearance, dielectric-strength, leakage, and accessible-part evaluation;

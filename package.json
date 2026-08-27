@@ -1,5 +1,5 @@
 {
-  "name": "usb-c-pd-20w-charger",
+  "name": "usb-c-pd-18w-charger",
   "version": "1.0.0",
   "main": "index.circuit.tsx",
   "devDependencies": {
@@ -7,7 +7,7 @@
     "tscircuit": "^0.0.2297",
     "typescript": "^5.9.3"
   },
-  "description": "Safety-hardened engineering prototype for an isolated USB-C PD 18 W mains adapter in tscircuit",
+  "description": "tscircuit hardware design for an isolated USB-C PD 18 W mains adapter",
   "private": true,
   "scripts": {
     "dev": "tsci dev",

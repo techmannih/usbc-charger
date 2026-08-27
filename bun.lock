@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "usb-c-pd-20w-charger",
+      "name": "usb-c-pd-18w-charger",
       "devDependencies": {
         "@types/react": "^19.2.18",
         "tscircuit": "^0.0.2297",

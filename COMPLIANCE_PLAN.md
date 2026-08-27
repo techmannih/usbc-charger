@@ -8,7 +8,7 @@ This plan must be frozen against the exact PCB revision, BOM, firmware/silicon r
 
 - External Class II power adaptor for IT/consumer equipment.
 - Label input: 100–240 VAC, 50/60 Hz. The AC/DC module's 85–265 VAC figure is an operating range, not the proposed consumer label range.
-- USB-C source PDOs: 5 V/3 A, 9 V/2 A and 12 V/1.5 A; 18 W maximum; no PPS claim.
+- USB-C source PDOs: 5 V/3 A, 9 V/2 A and 12 V/1.5 A; 18 W maximum; exact standard IP6520 non-PPS variant.
 - No protective-earth connection.
 - Final construction: closed, touch-safe, flame-retardant enclosure with a rated mains cord/plug and strain relief.
 
@@ -18,7 +18,7 @@ This plan must be frozen against the exact PCB revision, BOM, firmware/silicon r
 | --- | --- | --- |
 | India electrical safety | Isolated module architecture, fused/protected input, primary/SELV keepout, controlled BOM | BIS-recognized lab report and registration for the final adaptor under the classification/standard confirmed by BIS; construction, dielectric, temperature and abnormal-condition results |
 | International electrical safety | Hazard-based design provisions and component documentation | Accredited evaluation to the applicable market edition, commonly IEC 62368-1 or its national adoption; national deviations and marking review |
-| USB Type-C/PD | IP6520 reference topology and fixed PDO intent | USB-IF-authorized lab execution of every applicable Type-C and PD CTS section; valid TID/listing before using certified USB claims or logos |
+| USB Type-C/PD | Standard non-PPS IP6520 reference topology and fixed-supply PDO intent | USB-IF-authorized lab execution of every applicable Type-C and PD CTS section; valid TID/listing before using certified USB claims or logos |
 | EMC/immunity | CMC, X2 capacitor, local bypassing, short power loops and port ESD parts | Conducted/radiated emissions and applicable ESD, EFT, surge, dips/interruptions and immunity tests on the final closed product |
 | Energy efficiency | Low-power topology selected | Applicable market efficiency/no-load measurements and declarations for external power supplies |
 | Materials/mechanics | Mounting holes and fit-check enclosure model | Resin flammability evidence, touch-access/probe tests, impact/drop, cord anchorage, torque, heat/ball-pressure and enclosure construction review |
@@ -39,7 +39,7 @@ India's current BIS material lists “Power Adaptors for IT Equipments” under 
 
 ## Change control
 
-Treat these as certification-affecting changes: AC/DC module source or construction, PCB layout in the mains/isolation region, fuse or MOV rating, X/Y safety capacitor, enclosure material/wall geometry, mains cord/plug/strain relief, USB-PD controller or advertised PDOs. Record the rationale and obtain lab/certification-body disposition before production.
+Treat these as certification-affecting changes: AC/DC module source or construction, PCB layout in the mains/isolation region, fuse or MOV rating, X/Y safety capacitor, enclosure material/wall geometry, mains cord/plug/strain relief, USB-PD buck SoC variant or supported PDOs. Other IP6520 family variants are not approved substitutions for the standard non-PPS `IP6520`. Record the rationale and obtain lab/certification-body disposition before production.
 
 ## Authoritative starting points
 
@@ -50,4 +50,3 @@ Treat these as certification-affecting changes: AC/DC module source or construct
 - [USB-IF USB Type-C/PD compliance overview](https://www.usb.org/usbc)
 - [USB-IF compliance program](https://www.usb.org/compliance)
 - [USB Power Delivery Compliance Test Specification](https://www.usb.org/document-library/usb-power-delivery-compliance-test-specification-0)
-
