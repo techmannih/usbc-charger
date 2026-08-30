@@ -11,12 +11,18 @@ export const PESD5V0H1BSF = (props: ChipProps<typeof pinLabels>) => {
       pinLabels={pinLabels}
       symbol={
         <symbol>
-          <schematicpath svgPath="M -0.2 -0.14 L 0 0 L -0.2 0.14 Z" strokeColor="#880000" />
-          <port name="pin2" pinNumber={2} aliases={["2"]} direction="right" schX={0.4} schY={0} schStemLength={0.2} />
-          <port name="pin1" pinNumber={1} aliases={["1"]} direction="left" schX={-0.4} schY={0} schStemLength={0.2} />
-          <schematicpath points={[{"x":0.3,"y":0},{"x":0.2,"y":0}]} strokeColor="#880000" />
-          <schematicpath points={[{"x":0.04,"y":0.14},{"x":0,"y":0.08},{"x":0,"y":-0.08},{"x":-0.04,"y":-0.14}]} strokeColor="#880000" />
-          <schematicpath svgPath="M 0.2 0.14 L 0 0 L 0.2 -0.14 Z" strokeColor="#880000" />
+          {/* EasyEDA imports custom symbols as fixed geometry, so define this
+              shunt clamp vertically: protected signal above, GND below. */}
+          <port name="pin1" pinNumber={1} aliases={["1"]} direction="up" schX={0} schY={0.4} schStemLength={0.2} />
+          <port name="pin2" pinNumber={2} aliases={["2"]} direction="down" schX={0} schY={-0.4} schStemLength={0.2} />
+          <schematicpath svgPath="M -0.14 0.2 L 0 0 L 0.14 0.2 Z" strokeColor="#880000" />
+          <schematicpath points={[
+            { x: 0.14, y: -0.04 },
+            { x: 0.08, y: 0 },
+            { x: -0.08, y: 0 },
+            { x: -0.14, y: 0.04 },
+          ]} strokeColor="#880000" />
+          <schematicpath svgPath="M 0.14 -0.2 L 0 0 L -0.14 -0.2 Z" strokeColor="#880000" />
         </symbol>
       }
       supplierPartNumbers={{

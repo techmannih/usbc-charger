@@ -346,8 +346,9 @@ export const UsbCPd18WWallCharger = () => (
       pcbY={-15}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={10.06}
+      schX={14.5}
       schY={-2}
+      schOrientation="vertical"
       connections={{ pin1: "net.USB_SHIELD", pin2: "net.GND" }}
     />
     <capacitor
@@ -374,7 +375,7 @@ export const UsbCPd18WWallCharger = () => (
       schSheetName="pd"
       schSectionName="pd_output"
       schX={7}
-      schY={-1}
+      schY={-2.6}
       schWidth={0.6}
       connections={{ C: "net.VBUS_OUT", A: "net.GND" }}
     />
@@ -386,8 +387,8 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={9}
-      schY={-1}
+      schX={8.5}
+      schY={-2}
       connections={{ pin1: "net.CC1", pin2: "net.GND" }}
     />
     <PESD5V0H1BSF
@@ -397,7 +398,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={7.99}
+      schX={9.81}
       schY={-2}
       connections={{ pin1: "net.CC2", pin2: "net.GND" }}
     />
@@ -408,8 +409,8 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={11}
-      schY={-1}
+      schX={11.5}
+      schY={-2}
       connections={{ pin1: "net.USB_DP", pin2: "net.GND" }}
     />
     <PESD5V0H1BSF
@@ -419,7 +420,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={12}
+      schX={13.29}
       schY={-2}
       connections={{ pin1: "net.USB_DM", pin2: "net.GND" }}
     />
@@ -439,6 +440,8 @@ export const UsbCPd18WWallCharger = () => (
         DP2: "net.USB_DP",
         DN1: "net.USB_DM",
         DN2: "net.USB_DM",
+        VBUS1: "net.VBUS_OUT",
+        VBUS2: "net.VBUS_OUT",
         GND1: "net.GND",
         GND2: "net.GND",
         SH1: "net.USB_SHIELD",
@@ -470,35 +473,6 @@ export const UsbCPd18WWallCharger = () => (
     <testpoint name="TP2" footprintVariant="pad" padShape="circle" padDiameter="1.5mm" pcbX={29} pcbY={-24} schSheetName="pd" schSectionName="isolated_dc" schX={-3} schY={-4} connections={{ pin1: "net.GND" }} />
     <testpoint name="TP3" footprintVariant="pad" padShape="circle" padDiameter="1.5mm" pcbX={33} pcbY={-24} schSheetName="pd" schSectionName="pd_output" schX={5} schY={-4} connections={{ pin1: "net.VBUS_OUT" }} />
 
-    {/* Mains and power paths use deliberate copper widths. */}
-    <trace from=".J1 > .L" to=".F1 > .pin1" width="0.8mm" maxViaCount={0} />
-    <trace from=".F1 > .pin2" to=".TH1 > .pin1" width="0.8mm" maxViaCount={0} />
-    <trace from=".TH1 > .pin2" to=".LCM1 > .pin1" width="0.8mm" maxViaCount={0} />
-    <trace from=".LCM1 > .pin2" to=".U1 > .AC1" width="0.8mm" maxViaCount={0} />
-    <trace from=".J1 > .N" to=".LCM1 > .pin4" width="0.8mm" maxViaCount={0} />
-    <trace from=".LCM1 > .pin3" to=".U1 > .AC2" width="0.8mm" maxViaCount={0} />
-    <trace from=".F1 > .pin2" to=".RV1 > .pin1" width="0.6mm" maxViaCount={0} />
-    <trace from=".J1 > .N" to=".RV1 > .pin2" width="0.6mm" maxViaCount={0} />
-    <trace from=".LCM1 > .pin2" to=".C7 > .pin1" width="0.6mm" maxViaCount={0} />
-    <trace from=".LCM1 > .pin3" to=".C7 > .pin2" width="0.6mm" maxViaCount={0} />
-    <trace from=".U1 > .VOUT_15V" to=".C1 > .pin1" width="1.5mm" maxViaCount={0} />
-    <trace from=".U1 > .GND" to=".C1 > .pin2" width="1.5mm" maxViaCount={0} />
-    <trace from=".C1 > .pin1" to=".U2 > .VIN" width="1.2mm" maxViaCount={0} />
-    <trace name="BST_LOCAL" from=".U2 > .BST" to=".C3 > .pin1" width="0.3mm" maxViaCount={0} />
-    <trace name="BST_SWITCH_RETURN" from=".C3 > .pin2" to=".U2 > .SW" width="0.3mm" maxViaCount={0} />
-    <trace name="SW_TO_INDUCTOR" from=".U2 > .SW" to=".L1 > .pin1" width="1.2mm" maxViaCount={0} />
-    <trace name="SW_TO_SNUBBER" from=".U2 > .SW" to=".R1 > .pin1" width="0.4mm" maxViaCount={0} />
-    <trace from=".L1 > .pin2" to=".C4 > .pin1" width="1.5mm" maxViaCount={0} />
-    <trace name="VBUS_LOCAL_BYPASS" from=".L1 > .pin2" to=".C5 > .pin1" width="0.6mm" maxViaCount={0} />
-    <trace name="VBUS_TO_PORT" from=".C5 > .pin1" to=".J2 > .VBUS1" width="0.8mm" maxViaCount={0} />
-    <trace from=".C4 > .pin1" to=".J2 > .VBUS1" width="1.2mm" maxViaCount={0} />
-    <trace from=".C4 > .pin1" to=".J2 > .VBUS2" width="1.2mm" maxViaCount={0} />
-    <trace from=".C4 > .pin2" to=".J2 > .GND1" width="1.2mm" maxViaCount={1} />
-    <trace from=".U2 > .CC1" to=".J2 > .CC1" width="0.2mm" maxViaCount={0} />
-    <trace from=".U2 > .CC2" to=".J2 > .CC2" width="0.2mm" maxViaCount={0} />
-    <trace from=".U2 > .DP" to=".J2 > .DP1" width="0.2mm" maxViaCount={0} />
-    <trace from=".U2 > .DM" to=".J2 > .DN1" width="0.2mm" maxViaCount={0} />
-
     <silkscreentext text="DANGER: HAZARDOUS MAINS" pcbX={-41} pcbY={28} fontSize="0.8mm" />
     <silkscreentext text="100-240VAC 50/60Hz" pcbX={-39} pcbY={-29} fontSize="0.65mm" />
     <silkscreentext text="L" pcbX={-52} pcbY={-4} fontSize="0.8mm" />
@@ -508,7 +482,6 @@ export const UsbCPd18WWallCharger = () => (
     <silkscreentext text="U2 IP6520 STD / NO PPS" pcbX={34} pcbY={24} fontSize="0.6mm" />
     <silkscreentext text="USB-C PD OUT" pcbX={46} pcbY={-10} fontSize="0.75mm" />
     <silkscreentext text="5V/3A  9V/2A  12V/1.5A" pcbX={42} pcbY={-28} fontSize="0.65mm" />
-    <silkscreentext text="ENGINEERING SAMPLE - NOT CERTIFIED" pcbX={18} pcbY={29} fontSize="0.65mm" />
     </board>
     {/* Fit-check shell only. Production requires a lab-reviewed, flame-retardant enclosure. */}
     <enclosure.fdm.box
