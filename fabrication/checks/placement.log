@@ -1,0 +1,69 @@
+Detected entrypoint: 'index.circuit.tsx'
+placement summary: 3 suboptimal orientations
+
+worst issues:
+1. C6 connections cross the routing path between its pads. Suggested move: rotate C6 180 degrees.
+2. D5 connections cross the routing path between its pads. Suggested move: rotate D5 180 degrees.
+3. D6 connections cross the routing path between its pads. Suggested move: rotate D6 180 degrees.
+
+board top-layer utilization:
+- occupied: 50.046% (3303.01mm^2 of 6600mm^2)
+- empty spaces over 5% of board area:
+  - 8.038% (530.478mm^2); bounds=(minX=-25.444mm, maxX=43.794mm, minY=-30mm, maxY=-22.338mm)
+  - 6.68% (440.857mm^2); bounds=(minX=-55mm, maxX=-37.037mm, minY=5.457mm, maxY=30mm)
+  - 5.278% (348.354mm^2); bounds=(minX=20.994mm, maxX=55mm, minY=19.756mm, maxY=30mm)
+
+board-edge status:
+- J1: 5mm inside left edge
+- F1: 6.25mm inside left edge
+- RV1: 2.4mm inside top edge
+- TH1: 13.25mm inside top edge
+- LCM1: 9.675mm inside top edge
+- C7: 13mm inside top edge
+- R3: 8.125mm inside top edge
+- R4: 8.125mm inside top edge
+- U1: 4.55mm inside bottom edge
+- C1: 24.58mm inside right edge
+- C2: 21.525mm inside bottom edge
+- D1: 12.616mm inside top edge
+- U2: 18.385mm inside bottom edge
+- C3: 15.525mm inside bottom edge
+- L1: 8.85mm inside right edge
+- R1: 15.525mm inside bottom edge
+- C6: 12.525mm inside bottom edge
+- C4: 10.58mm inside right edge
+- R2: 2.775mm inside right edge
+- C5: 4.775mm inside right edge
+- D2: 6.385mm inside top edge
+- D3: 7.325mm inside right edge
+- D4: 8.325mm inside right edge
+- D5: 7.325mm inside right edge
+- D6: 7.325mm inside right edge
+- J2: 0.326mm inside right edge
+- TP1: 8.25mm inside top edge
+- TP2: 5.25mm inside top edge
+- TP3: 5.25mm inside top edge
+
+flagged components:
+- C6
+  source placement: placement_mode=none
+  resolved placement: center=(31mm, 17mm) on top; bounds=(minX=29.775mm, maxX=32.225mm, minY=16.525mm, maxY=17.475mm); size=(width=2.45mm, height=0.95mm); anchor_alignment="center"
+  board edge status: 12.525mm inside bottom edge
+  issues:
+  - C6 connections cross the routing path between its pads. Suggested move: rotate C6 180 degrees.
+- D5
+  source placement: placement_mode=none
+  resolved placement: center=(47.5mm, -6mm) on top; bounds=(minX=47.325mm, maxX=47.675mm, minY=-6.35mm, maxY=-5.65mm); size=(width=0.35mm, height=0.7mm); anchor_alignment="center"
+  board edge status: 7.325mm inside right edge
+  issues:
+  - D5 connections cross the routing path between its pads. Suggested move: rotate D5 180 degrees.
+- D6
+  source placement: placement_mode=none
+  resolved placement: center=(47.5mm, -7.4mm) on top; bounds=(minX=47.325mm, maxX=47.675mm, minY=-7.75mm, maxY=-7.05mm); size=(width=0.35mm, height=0.7mm); anchor_alignment="center"
+  board edge status: 7.325mm inside right edge
+  issues:
+  - D6 connections cross the routing path between its pads. Suggested move: rotate D6 180 degrees.
+
+placement drc:
+Errors: 0
+Warnings: 0

@@ -13,6 +13,7 @@ export const PESD5V0H1BSF = (props: ChipProps<typeof pinLabels>) => {
         <symbol>
           {/* EasyEDA imports custom symbols as fixed geometry, so define this
               shunt clamp vertically: protected signal above, GND below. */}
+          <schematictext text="{NAME}" schX={0.24} schY={0.1} fontSize={0.18} anchor="left" color="#006464" />
           <port name="pin1" pinNumber={1} aliases={["1"]} direction="up" schX={0} schY={0.4} schStemLength={0.2} />
           <port name="pin2" pinNumber={2} aliases={["2"]} direction="down" schX={0} schY={-0.4} schStemLength={0.2} />
           <schematicpath svgPath="M -0.14 0.2 L 0 0 L 0.14 0.2 Z" strokeColor="#880000" />

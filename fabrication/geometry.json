@@ -1,0 +1,34 @@
+{
+  "board": {
+    "width_mm": 110,
+    "height_mm": 60,
+    "thickness_mm": 1.6,
+    "layers": 2,
+    "material": "fr4"
+  },
+  "coordinates": {
+    "unit": "mm",
+    "origin": "board centre",
+    "x_axis": "right",
+    "y_axis": "up",
+    "rotation": "counterclockwise degrees",
+    "supplier_rotation_calibrated": false
+  },
+  "counts": {
+    "purchased_parts": 26,
+    "smt_placements": 18,
+    "manual_placements": 8,
+    "bare_test_pads": 3,
+    "traces": 60,
+    "vias": 31,
+    "plated_holes": 22,
+    "nonplated_holes": 6,
+    "pinmap_rows": 80
+  },
+  "measured_minimum_mm": {
+    "trace_width": 0.15,
+    "via_drill": 0.2,
+    "via_pad": 0.3
+  },
+  "scope": "Geometry inventory, not a clearance or supplier DFM certification"
+}

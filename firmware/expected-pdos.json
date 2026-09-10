@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "status": "design-target-not-a-measurement",
+  "controller": "IP6520",
+  "variant": "standard-non-PPS",
+  "lcsc_part": "C7433861",
+  "external_firmware_required": false,
+  "input_voltage_v": 15,
+  "max_output_power_w": 18,
+  "source_capabilities": [
+    { "type": "fixed", "voltage_v": 5, "current_a": 3 },
+    { "type": "fixed", "voltage_v": 9, "current_a": 2 },
+    { "type": "fixed", "voltage_v": 12, "current_a": 1.5 }
+  ]
+}

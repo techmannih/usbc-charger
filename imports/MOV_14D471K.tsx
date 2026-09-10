@@ -11,6 +11,7 @@ export const MOV_14D471K = (props: ChipProps<typeof pinLabels>) => {
       pinLabels={pinLabels}
       symbol={
         <symbol>
+          <schematictext text="{NAME}" schX={0} schY={0.32} fontSize={0.18} anchor="center" color="#006464" />
           <schematicpath points={[{"x":0.2,"y":0.12},{"x":0.12,"y":0.12}]} strokeColor="#880000" />
           <schematicrect schX={0} schY={0} width={0.4} height={0.16} color="#880000" />
           <schematicpath points={[{"x":-0.2,"y":-0.12},{"x":-0.12,"y":-0.12}]} strokeColor="#880000" />

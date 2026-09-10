@@ -1,0 +1,62 @@
+Building 1 file(s)...
+Building index.circuit.tsx...
+Generating circuit JSON...
+Circuit JSON written to dist/index/circuit.json
+The "R" prefix is being used with a <chip />, try using it with a <resistor />
+The "L" prefix is being used with a <chip />, try using it with an <inductor />
+component has no courtyard
+component has no courtyard
+component has no courtyard
+component has no courtyard
+TP1 has no courtyard
+TP2 has no courtyard
+TP3 has no courtyard
+All pins on RV1 are underspecified (no pinAttributes set)
+All pins on TH1 are underspecified (no pinAttributes set)
+All pins on LCM1 are underspecified (no pinAttributes set)
+All pins on D1 are underspecified (no pinAttributes set)
+All pins on D2 are underspecified (no pinAttributes set)
+All pins on D3 are underspecified (no pinAttributes set)
+All pins on D4 are underspecified (no pinAttributes set)
+All pins on D5 are underspecified (no pinAttributes set)
+All pins on D6 are underspecified (no pinAttributes set)
+RV1 has no pin with requires_power=true
+TH1 has no pin with requires_power=true
+LCM1 has no pin with requires_power=true
+D1 has no pin with requires_power=true
+D2 has no pin with requires_power=true
+D3 has no pin with requires_power=true
+D4 has no pin with requires_power=true
+D5 has no pin with requires_power=true
+D6 has no pin with requires_power=true
+RV1 has no pin with requires_ground=true
+TH1 has no pin with requires_ground=true
+LCM1 has no pin with requires_ground=true
+D1 has no pin with requires_ground=true
+D2 has no pin with requires_ground=true
+D3 has no pin with requires_ground=true
+D4 has no pin with requires_ground=true
+D5 has no pin with requires_ground=true
+D6 has no pin with requires_ground=true
+F1 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+R3 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+R4 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+C1 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+C2 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+C3 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+L1 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+R1 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+C6 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+C4 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+R2 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+C5 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+TP1 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+TP2 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+TP3 is missing schematic reference designator text. For a custom symbol, add name="{REFDES}" inside the symbol.
+
+Build complete
+  Circuits  1 passed
+  Output    dist
+
+✓ Done
+Build exiting with code 0: build finished successfully

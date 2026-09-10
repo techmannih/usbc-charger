@@ -13,6 +13,7 @@ export const XRSQ1010_10mH_H = (props: ChipProps<typeof pinLabels>) => {
       pinLabels={pinLabels}
       symbol={
         <symbol>
+          <schematictext text="{NAME}" schX={0} schY={0.7} fontSize={0.18} anchor="center" color="#006464" />
           <schematicpath svgPath="M -0.20004 0.44006 A 0.078 0.08 0 1 0 -0.20012 0.28076" strokeColor="#880000" />
           <schematicpath svgPath="M -0.19998 0.2704 A 0.078 0.08 0 1 0 -0.20008 0.1111" strokeColor="#880000" />
           <schematicpath svgPath="M -0.19998 0.10106 A 0.078 0.08 0 1 0 -0.20008 -0.05824" strokeColor="#880000" />

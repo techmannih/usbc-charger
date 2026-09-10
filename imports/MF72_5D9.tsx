@@ -11,6 +11,7 @@ export const MF72_5D9 = (props: ChipProps<typeof pinLabels>) => {
       pinLabels={pinLabels}
       symbol={
         <symbol>
+          <schematictext text="{NAME}" schX={0} schY={0.42} fontSize={0.18} anchor="center" color="#006464" />
           <schematicrect schX={0} schY={0} width={0.6} height={0.2} color="#880000" />
           <port name="pin1" pinNumber={1} aliases={["1"]} direction="left" schX={-0.6} schY={0} schStemLength={0.3} />
           <port name="pin2" pinNumber={2} aliases={["2"]} direction="right" schX={0.6} schY={0} schStemLength={0.3} />

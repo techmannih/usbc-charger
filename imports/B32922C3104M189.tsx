@@ -9,6 +9,7 @@ export const B32922C3104M189 = (props: Omit<CapacitorProps, "capacitance">) => {
       capacitance="100nF"
       symbol={
         <symbol>
+          <schematictext text="{NAME}" schX={0.28} schY={0.16} fontSize={0.18} anchor="left" color="#006464" />
           <schematicpath points={[{"x":0.16,"y":-0.04},{"x":-0.16,"y":-0.04}]} strokeColor="#A00000" />
           <port name="pin1" pinNumber={1} aliases={["1"]} direction="down" schX={0} schY={-0.4} schStemLength={0.2} />
           <schematicpath points={[{"x":0,"y":0.2},{"x":0,"y":0.04}]} strokeColor="#A00000" />

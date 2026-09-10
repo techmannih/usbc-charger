@@ -1,0 +1,27 @@
+Designator,Mid X,Mid Y,Layer,Rotation,Assembly,Rotation Review
+C1,26.000000,0.000000,top,0,SMT,supplier-centroid-and-pin1-review-pending
+C2,24.000000,8.000000,top,0,SMT,supplier-centroid-and-pin1-review-pending
+C3,28.000000,14.000000,top,0,SMT,supplier-centroid-and-pin1-review-pending
+C4,40.000000,-10.000000,top,180,SMT,supplier-centroid-and-pin1-review-pending
+C5,49.000000,8.000000,top,0,SMT,supplier-centroid-and-pin1-review-pending
+C6,31.000000,17.000000,top,0,SMT,supplier-centroid-and-pin1-review-pending
+C7,-5.000000,-16.000000,top,0,through-hole,supplier-centroid-and-pin1-review-pending
+D1,27.000000,-14.000000,top,90,SMT,supplier-centroid-and-pin1-review-pending
+D2,46.000000,-20.000000,top,90,SMT,supplier-centroid-and-pin1-review-pending
+D3,47.500000,-8.800000,top,90,SMT,supplier-centroid-and-pin1-review-pending
+D4,46.500000,-10.200000,top,90,SMT,supplier-centroid-and-pin1-review-pending
+D5,47.500000,-6.000000,top,90,SMT,supplier-centroid-and-pin1-review-pending
+D6,47.500000,-7.400000,top,90,SMT,supplier-centroid-and-pin1-review-pending
+F1,-47.000000,-13.000000,top,90,SMT,supplier-centroid-and-pin1-review-pending
+J1,-49.000000,0.000000,top,90,through-hole,supplier-centroid-and-pin1-review-pending
+J2,51.425044,0.000000,top,90,mixed,supplier-centroid-and-pin1-review-pending
+L1,40.500000,8.000000,top,270,through-hole,supplier-centroid-and-pin1-review-pending
+LCM1,-22.936500,-16.063373,top,0,through-hole,supplier-centroid-and-pin1-review-pending
+R1,31.000000,14.000000,top,0,SMT,supplier-centroid-and-pin1-review-pending
+R2,51.000000,-15.000000,top,0,SMT,supplier-centroid-and-pin1-review-pending
+R3,-8.000000,-21.000000,top,0,SMT,supplier-centroid-and-pin1-review-pending
+R4,-2.000000,-21.000000,top,0,SMT,supplier-centroid-and-pin1-review-pending
+RV1,-34.000000,-25.500000,top,0,through-hole,supplier-centroid-and-pin1-review-pending
+TH1,-37.000000,-13.000000,top,0,through-hole,supplier-centroid-and-pin1-review-pending
+U1,-8.000000,11.000000,top,0,through-hole,supplier-centroid-and-pin1-review-pending
+U2,30.000000,8.000000,top,180,SMT,supplier-centroid-and-pin1-review-pending

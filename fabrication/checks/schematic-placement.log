@@ -1,0 +1,28 @@
+Detected entrypoint: 'index.circuit.tsx'
+<SchematicSheet name="pd" id="schematic_sheet_1">
+<SchematicBoxPositions>
+<SchematicBoxPlacement componentName="C1" positionAnchor="center" schX="-8.6" schY="2.42" width="0.6" height="1.1" />
+<SchematicBoxPlacement componentName="D1" positionAnchor="center" schX="-4.6" schY="-0.88" width="0.8" height="0.6" />
+<SchematicBoxPlacement componentName="U2" positionAnchor="center" schX="-0.6" schY="1" width="1.865" height="1" />
+<SchematicBoxPlacement componentName="L1" positionAnchor="center" schX="3.4" schY="1" width="1.056" height="0.46" />
+<SchematicBoxPlacement componentName="C4" positionAnchor="center" schX="6.4" schY="2.42" width="0.6" height="1.1" />
+<SchematicBoxPlacement componentName="D2" positionAnchor="center" schX="6.4" schY="-2.48" width="0.8" height="0.6" />
+<SchematicBoxPlacement componentName="D3" positionAnchor="center" schX="8" schY="-2" width="0.48" height="0.4" />
+</SchematicBoxPositions>
+<SchematicPlacementIssues>
+<TraceCanBeSimplifiedByMovingComponent schematicTraceId="schematic_trace_41" targetComponentName="D3" deltaSchX="-10.413" deltaSchY="0" newSchX="-2.413" newSchY="-2" currentTurnCount="3" suggestedTurnCount="1" message="move D3 left by 10.413 (to schX=-2.413, schY=-2) to reduce this trace from 3 turns to 1" />
+<TwoPinComponentShouldBeVertical componentName="C1" railPin="pin1" railType="power" deltaSchRotation="-90" suggestedRailFacingDirection="up" message="rotate C1 by -90° so its power-connected pin faces up and the component is vertical" />
+<TwoPinComponentShouldBeVertical componentName="D1" railPin="pin1" railType="power" deltaSchRotation="-90" suggestedRailFacingDirection="up" message="rotate D1 by -90° so its power-connected pin faces up and the component is vertical" />
+<TwoPinComponentShouldBeVertical componentName="L1" railPin="pin2" railType="power" deltaSchRotation="90" suggestedRailFacingDirection="up" message="rotate L1 by 90° so its power-connected pin faces up and the component is vertical" />
+<TwoPinComponentShouldBeVertical componentName="C4" railPin="pin1" railType="power" deltaSchRotation="-90" suggestedRailFacingDirection="up" message="rotate C4 by -90° so its power-connected pin faces up and the component is vertical" />
+<TwoPinComponentShouldBeVertical componentName="D2" railPin="pin1" railType="power" deltaSchRotation="-90" suggestedRailFacingDirection="up" message="rotate D2 by -90° so its power-connected pin faces up and the component is vertical" />
+</SchematicPlacementIssues>
+</SchematicSheet>
+<SchematicSheet name="mains" id="schematic_sheet_0">
+<SchematicBoxPositions>
+<SchematicBoxPlacement componentName="R3" positionAnchor="center" schX="1" schY="-2.6" width="0.6" height="0.65" />
+</SchematicBoxPositions>
+<SchematicPlacementIssues>
+<TwoPinComponentShouldBeVertical componentName="R3" railPin="pin1" railType="power" deltaSchRotation="-90" suggestedRailFacingDirection="up" message="rotate R3 by -90° so its power-connected pin faces up and the component is vertical" />
+</SchematicPlacementIssues>
+</SchematicSheet>

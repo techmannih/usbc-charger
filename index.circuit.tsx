@@ -34,8 +34,10 @@ import { XRSQ1010_10mH_H } from "./imports/XRSQ1010_10mH_H"
  * secondary TVS/ESD protection. Physical safety and compliance remain subject
  * to accredited-laboratory testing of the final enclosure and production unit.
  */
-export const UsbCPd18WWallCharger = () => (
-  <>
+export const UsbCPd18WWallCharger = () => {
+  const pdSchShift = -0.6
+  return (
+    <>
     <board
       name="USB_C_PD_18W_WALL_CHARGER"
       title="85-265 VAC to USB-C PD 18 W Engineering Prototype"
@@ -198,7 +200,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbY={0}
       schSheetName="pd"
       schSectionName="isolated_dc"
-      schX={-8}
+      schX={-8 + pdSchShift}
       schY={2.42}
       connections={{ pin1: "net.VIN_15V", pin2: "net.GND" }}
     />
@@ -214,7 +216,7 @@ export const UsbCPd18WWallCharger = () => (
       schOrientation="vertical"
       schSheetName="pd"
       schSectionName="isolated_dc"
-      schX={-6}
+      schX={-6 + pdSchShift}
       schY={3}
       connections={{ pin1: "net.VIN_15V", pin2: "net.GND" }}
     />
@@ -225,7 +227,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="isolated_dc"
-      schX={-4}
+      schX={-4 + pdSchShift}
       schY={-1}
       schWidth={0.6}
       connections={{ C: "net.VIN_15V", A: "net.GND" }}
@@ -237,7 +239,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={180}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={0}
+      schX={0 + pdSchShift}
       schY={1}
       schWidth={1.865}
       schHeight={1}
@@ -273,7 +275,7 @@ export const UsbCPd18WWallCharger = () => (
       schOrientation="vertical"
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={3}
+      schX={3 + pdSchShift}
       schY={3}
       connections={{ pin1: "net.BST", pin2: "net.SW" }}
     />
@@ -286,7 +288,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={270}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={4}
+      schX={4 + pdSchShift}
       schY={1}
       connections={{ pin1: "net.SW", pin2: "net.VBUS_OUT" }}
     />
@@ -301,7 +303,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbY={14}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={2}
+      schX={2 + pdSchShift}
       schY={-1.42}
       connections={{ pin1: "net.SW", pin2: "net.SNUB" }}
     />
@@ -317,7 +319,7 @@ export const UsbCPd18WWallCharger = () => (
       schOrientation="vertical"
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={4}
+      schX={4 + pdSchShift}
       schY={-2}
       connections={{ pin1: "net.SNUB", pin2: "net.GND" }}
     />
@@ -332,7 +334,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={180}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={7}
+      schX={7 + pdSchShift}
       schY={2.42}
       connections={{ pin1: "net.VBUS_OUT", pin2: "net.GND" }}
     />
@@ -346,7 +348,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbY={-15}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={14.5}
+      schX={14.5 + pdSchShift}
       schY={-2}
       schOrientation="vertical"
       connections={{ pin1: "net.USB_SHIELD", pin2: "net.GND" }}
@@ -363,7 +365,7 @@ export const UsbCPd18WWallCharger = () => (
       schOrientation="vertical"
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={9}
+      schX={9 + pdSchShift}
       schY={3}
       connections={{ pin1: "net.VBUS_OUT", pin2: "net.GND" }}
     />
@@ -374,7 +376,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={7}
+      schX={7 + pdSchShift}
       schY={-2.6}
       schWidth={0.6}
       connections={{ C: "net.VBUS_OUT", A: "net.GND" }}
@@ -387,7 +389,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={8.5}
+      schX={8.5 + pdSchShift}
       schY={-2}
       connections={{ pin1: "net.CC1", pin2: "net.GND" }}
     />
@@ -398,7 +400,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={9.81}
+      schX={9.81 + pdSchShift}
       schY={-2}
       connections={{ pin1: "net.CC2", pin2: "net.GND" }}
     />
@@ -409,7 +411,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={11.5}
+      schX={11.5 + pdSchShift}
       schY={-2}
       connections={{ pin1: "net.USB_DP", pin2: "net.GND" }}
     />
@@ -420,7 +422,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={13.29}
+      schX={13.29 + pdSchShift}
       schY={-2}
       connections={{ pin1: "net.USB_DM", pin2: "net.GND" }}
     />
@@ -431,7 +433,7 @@ export const UsbCPd18WWallCharger = () => (
       pcbRotation={90}
       schSheetName="pd"
       schSectionName="pd_output"
-      schX={13}
+      schX={13 + pdSchShift}
       schY={1}
       connections={{
         CC1: "net.CC1",
@@ -469,9 +471,9 @@ export const UsbCPd18WWallCharger = () => (
     <fabricationnotetext text="8 mm PRIMARY/SELV COPPER KEEPOUT" pcbX={10} pcbY={0} fontSize="1mm" anchorAlignment="center" color="#d97706" />
 
     {/* Isolated-side test access for production and compliance measurements. */}
-    <testpoint name="TP1" footprintVariant="pad" padShape="circle" padDiameter="1.5mm" pcbX={25} pcbY={-21} schSheetName="pd" schSectionName="isolated_dc" schX={-5} schY={-4} connections={{ pin1: "net.VIN_15V" }} />
-    <testpoint name="TP2" footprintVariant="pad" padShape="circle" padDiameter="1.5mm" pcbX={29} pcbY={-24} schSheetName="pd" schSectionName="isolated_dc" schX={-3} schY={-4} connections={{ pin1: "net.GND" }} />
-    <testpoint name="TP3" footprintVariant="pad" padShape="circle" padDiameter="1.5mm" pcbX={33} pcbY={-24} schSheetName="pd" schSectionName="pd_output" schX={5} schY={-4} connections={{ pin1: "net.VBUS_OUT" }} />
+    <testpoint name="TP1" footprintVariant="pad" padShape="circle" padDiameter="1.5mm" pcbX={25} pcbY={-21} schSheetName="pd" schSectionName="isolated_dc" schX={-5 + pdSchShift} schY={-4} connections={{ pin1: "net.VIN_15V" }} />
+    <testpoint name="TP2" footprintVariant="pad" padShape="circle" padDiameter="1.5mm" pcbX={29} pcbY={-24} schSheetName="pd" schSectionName="isolated_dc" schX={-3 + pdSchShift} schY={-4} connections={{ pin1: "net.GND" }} />
+    <testpoint name="TP3" footprintVariant="pad" padShape="circle" padDiameter="1.5mm" pcbX={33} pcbY={-24} schSheetName="pd" schSectionName="pd_output" schX={5 + pdSchShift} schY={-4} connections={{ pin1: "net.VBUS_OUT" }} />
 
     <silkscreentext text="DANGER: HAZARDOUS MAINS" pcbX={-41} pcbY={28} fontSize="0.8mm" />
     <silkscreentext text="100-240VAC 50/60Hz" pcbX={-39} pcbY={-29} fontSize="0.65mm" />
@@ -492,7 +494,8 @@ export const UsbCPd18WWallCharger = () => (
       wallThickness="2mm"
     />
   </>
-)
+  )
+}
 
 export const UsbCPd18WCharger = UsbCPd18WWallCharger
 export default UsbCPd18WWallCharger

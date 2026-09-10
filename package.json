@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.circuit.tsx",
   "devDependencies": {
+    "@tscircuit/checks": "0.0.189",
     "@types/react": "^19.2.18",
-    "tscircuit": "^0.0.2297",
+    "circuit-to-svg": "0.0.413",
+    "tscircuit": "^0.0.2507",
     "typescript": "^5.9.3"
   },
   "description": "tscircuit hardware design for an isolated USB-C PD 18 W mains adapter",
@@ -14,6 +16,9 @@
     "build": "tsci build index.circuit.tsx",
     "build:preview": "tsci build --pcb-png --schematic-png --3d-png index.circuit.tsx",
     "build:handoff": "tsci build --kicad-project-zip --step --glbs index.circuit.tsx",
+    "export:fabrication": "bun scripts/export-fabrication.mjs",
+    "check:fabrication": "bun scripts/check-fabrication.mjs",
+    "check:pdos": "bun firmware/check-pdos.mjs",
     "snapshot": "tsci snapshot index.circuit.tsx",
     "snapshot:update": "tsci snapshot index.circuit.tsx --update",
     "snapshot:3d": "tsci snapshot index.circuit.tsx --3d --camera-preset top-center-angled",

@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-09-10T14:56:54.860Z",
+  "circuit_sha256": "3cb7976c16134d73d81d8564d344c9627e24027b4189757b0a0f0ef6bc54cb70",
+  "status": "engineering-review",
+  "released_for_manufacturing": false,
+  "gerbers_generated": true,
+  "checks": [
+    {
+      "name": "typecheck",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "log": "checks/typecheck.log"
+    },
+    {
+      "name": "netlist",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
+        "node_modules/tscircuit/cli.mjs",
+        "check",
+        "netlist"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "log": "checks/netlist.log"
+    },
+    {
+      "name": "schematic-placement",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
+        "node_modules/tscircuit/cli.mjs",
+        "check",
+        "schematic-placement"
+      ],
+      "exit_code": 0,
+      "status": "review-required",
+      "log": "checks/schematic-placement.log"
+    },
+    {
+      "name": "placement",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
+        "node_modules/tscircuit/cli.mjs",
+        "check",
+        "placement"
+      ],
+      "exit_code": 1,
+      "status": "failed",
+      "log": "checks/placement.log"
+    },
+    {
+      "name": "build",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
+        "node_modules/tscircuit/cli.mjs",
+        "build",
+        "--disable-parts-engine",
+        "index.circuit.tsx"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "log": "checks/build.log"
+    },
+    {
+      "name": "routing",
+      "status": "passed",
+      "log": "checks/routing.json"
+    },
+    {
+      "name": "shorts",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
+        "node_modules/tscircuit/cli.mjs",
+        "check",
+        "shorts",
+        "dist/fabrication-stage-6FSZOu/circuit.json"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "log": "checks/shorts.log"
+    },
+    {
+      "name": "netlist-export",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
+        "node_modules/tscircuit/cli.mjs",
+        "export",
+        "dist/fabrication-stage-6FSZOu/circuit.json",
+        "-f",
+        "readable-netlist",
+        "-o",
+        "dist/fabrication-stage-6FSZOu/netlist.txt"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "log": "checks/netlist-export.log"
+    },
+    {
+      "name": "gerber-export",
+      "command": [
+        "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
+        "node_modules/tscircuit/cli.mjs",
+        "export",
+        "dist/fabrication-stage-6FSZOu/circuit.json",
+        "-f",
+        "gerbers",
+        "-o",
+        "dist/fabrication-stage-6FSZOu/cli-gerbers.zip"
+      ],
+      "exit_code": 0,
+      "status": "passed",
+      "log": "checks/gerber-export.log"
+    }
+  ],
+  "source_errors": [],
+  "source_warning_counts": {
+    "pcb_component_missing_courtyard_warning": 7,
+    "schematic_component_styling_warning": 15,
+    "source_component_pins_underspecified_warning": 9,
+    "source_no_ground_pin_defined_warning": 9,
+    "source_no_power_pin_defined_warning": 9,
+    "source_refdes_convention_warning": 2
+  },
+  "open_reviews": [
+    "Supplier rotation and centroid calibration for all fitted parts",
+    "CAM, stencil, U2 via-in-pad, J2 plated-slot and assembly-process review",
+    "Physical tests and release gates in LAB_VALIDATION_PLAN.md and DESIGN_RISK_REGISTER.md"
+  ],
+  "hardware_test_evidence": "not-supplied"
+}

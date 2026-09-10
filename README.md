@@ -72,7 +72,7 @@ The IP6520 input range includes 15 V, but the datasheet's 12 V / 1.5 A electrica
 - Primary-side AC parts are grouped on the left; the isolated USB-PD stage is on the right.
 - An 8 mm copper-free corridor spans both copper layers between the primary and SELV regions.
 - The ground pour is restricted to the isolated low-voltage side.
-- Mains and power paths use explicitly assigned trace widths and controlled via counts.
+- Routed trace widths and via dimensions are recorded in the fabrication geometry report.
 - Four 3.2 mm non-plated mounting holes provide fixed enclosure mounting points.
 - The USB-C receptacle and mains entry include enclosure aperture definitions.
 - The included FDM enclosure is a volume and connector-alignment model, not a production housing.
@@ -107,8 +107,21 @@ The supplier IDs are included for design reproducibility, not as an approval of 
 ├── index.circuit.tsx              Main tscircuit source and board layout
 ├── index.circuit.circuit.json     Generated circuit consumed by viewers/tools
 ├── imports/                       Custom component and footprint definitions
+├── firmware/                      Autonomous-controller profile and host PDO checker
+├── fabrication/                   BOM, CPL, Gerbers, pin map, drawings and check records
+├── scripts/                       Reproducible export and fabrication-integrity checks
+├── BOM.csv                        Generated complete purchased electrical BOM
 ├── __snapshots__/                 Schematic, PCB, and 3D reference renders
 ├── mechanical/                    Enclosure fit-check source
+├── FABRICATION_NOTES.md            Board construction and CAM review notes
+├── FIRMWARE_BRINGUP.md             Controller/board bring-up; no flashing required
+├── PINMAP.md                      Important interfaces and full generated pin-map link
+├── POWER_BUDGET.md                Calculated conversion and module headroom
+├── JLCPCB_PARTS.md                 Procurement and assembly-list guidance
+├── PACKAGE_AUDIT.md                Package and supplier orientation review scope
+├── DESIGN_REVIEW.md                Review index and open findings
+├── VALIDATION.md                   Reproduction commands and check scope
+├── DRC_REPORT.md                   CAD findings and retained-log index
 ├── COMPLIANCE_PLAN.md             Certification planning and evidence gaps
 ├── LAB_VALIDATION_PLAN.md         Hardware test plan
 ├── ENCLOSURE_REQUIREMENTS.md      Production enclosure requirements
@@ -134,14 +147,28 @@ bun run dev
 | --- | --- |
 | `bun run dev` | Start the interactive local viewer |
 | `bun run typecheck` | Check the TypeScript source |
-| `bun run build` | Rebuild `index.circuit.circuit.json` from the TSX source |
+| `bun run build` | Build `dist/index/circuit.json` from the TSX source |
 | `bun run verify` | Run type, netlist, schematic placement, PCB placement, shorts, and build checks |
 | `bun run build:preview` | Generate PCB, schematic, and 3D preview images |
 | `bun run snapshot:update` | Update committed PCB and schematic snapshots |
 | `bun run snapshot:3d:update` | Update the committed angled 3D snapshot |
 | `bun run build:handoff` | Generate KiCad, STEP, and GLB handoff outputs |
+| `bun run export:fabrication` | Fresh build, check records, BOM/CPL/pinmap, both schematic sheets and gated Gerber export |
+| `bun run check:fabrication` | Verify generated artifacts, BOM/placement coverage, archive contents and source hashes |
+| `bun run check:pdos <capture.json>` | Compare decoded analyzer PDOs with the design targets; no device flashing |
 
 Generated export files are written under `dist/index/`.
+
+The dedicated fabrication workflow writes a versioned review package under
+[`fabrication/`](fabrication/README.md), plus the root [`BOM.csv`](BOM.csv).
+It requires Bun and `zip`/`unzip`. Its source inventory and file hashes prevent
+accidental mixing of revisions. See
+[`REFERENCE_COMPARISON.md`](fabrication/REFERENCE_COMPARISON.md) for the file-category
+mapping to the three linked pedometer projects.
+
+The controller needs no external application firmware. The new
+[`firmware/`](firmware/README.md) folder records the expected fixed PDOs and
+contains a host-side capture checker. It cannot change U2's behavior.
 
 ## Development workflow
 

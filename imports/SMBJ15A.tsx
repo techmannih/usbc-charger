@@ -11,6 +11,7 @@ export const SMBJ15A = (props: ChipProps<typeof pinLabels>) => {
       pinLabels={pinLabels}
       symbol={
         <symbol>
+          <schematictext text="{NAME}" schX={0} schY={0.32} fontSize={0.18} anchor="center" color="#006464" />
           <port name="pin2" pinNumber={2} aliases={["2"]} direction="right" schX={0.4} schY={0} schStemLength={0.3} />
           <port name="pin1" pinNumber={1} aliases={["1"]} direction="left" schX={-0.4} schY={0} schStemLength={0.3} />
           <schematicpath points={[{"x":-0.18,"y":0.18},{"x":-0.1,"y":0.1},{"x":-0.1,"y":-0.1},{"x":-0.02,"y":-0.18}]} strokeColor="#880000" />

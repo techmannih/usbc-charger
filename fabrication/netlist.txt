@@ -1,0 +1,284 @@
+COMPONENTS:
+ - J1: J1, source_component
+ - F1: F1, source_component
+ - RV1: MOV-14D471K
+ - TH1: MF72 5D9
+ - LCM1: XRSQ1010-10mH-H
+ - C7: 100nF capacitor
+ - R3: 1MΩ res1206 resistor
+ - R4: 1MΩ res1206 resistor
+ - U1: HLK-20M15C
+ - C1: 100uF capacitor
+ - C2: 100nF cap0603 capacitor
+ - D1: SMBJ15A
+ - U2: IP6520
+ - C3: 2.2uF cap0603 capacitor
+ - L1: L1, source_component
+ - R1: 2Ω res0603 resistor
+ - C6: 1nF cap0603 capacitor
+ - C4: 100uF capacitor
+ - R2: 0Ω res0603 resistor
+ - C5: 100nF cap0603 capacitor
+ - D2: SMBJ13A
+ - D3: PESD5V0H1BSF
+ - D4: PESD5V0H1BSF
+ - D5: PESD5V0H1BSF
+ - D6: PESD5V0H1BSF
+ - J2: J2, source_component
+ - TP1: TP1, source_component
+ - TP2: TP2, source_component
+ - TP3: TP3, source_component
+
+NET: AC_L
+  - F1 pin1
+  - J1 VIN_POS
+
+NET: AC_L_FUSED
+  - TH1 pin1
+  - RV1 pin1
+  - F1 pin2
+
+NET: AC_L_LIMITED
+  - LCM1 pin1
+  - TH1 pin2
+
+NET: AC_N
+  - LCM1 pin4
+  - RV1 pin2
+  - J1 GND
+
+NET: X_CAP_BLEED_MID
+  - R4 pin1
+  - R3 pin2
+
+NET: AC_N_FILTERED
+  - U1 AC2
+  - R4 pin2
+  - C7 pin2
+  - LCM1 pin3
+
+NET: AC_L_FILTERED
+  - U1 AC1
+  - R3 pin1
+  - C7 pin1
+  - LCM1 pin2
+
+NET: BST
+  - C3 pin1 (+)
+  - U2 BST
+
+NET: SW
+  - R1 pin1
+  - L1 pin1 (+)
+  - C3 pin2 (-)
+  - U2 SW
+
+NET: SNUB
+  - C6 pin1 (+)
+  - R1 pin2
+
+NET: CC1
+  - J2 A5
+  - D3 pin1
+  - U2 CC1
+
+NET: CC2
+  - J2 B5
+  - D4 pin1
+  - U2 CC2
+
+NET: USB_DP
+  - J2 B6
+  - J2 A6
+  - D5 pin1
+  - U2 DP
+
+NET: USB_DM
+  - J2 B7
+  - J2 A7
+  - D6 pin1
+  - U2 DM
+
+NET: USB_SHIELD
+  - J2 EH3
+  - J2 EH4
+  - J2 EH1
+  - J2 EH2
+  - R2 pin1
+
+NET: VIN_15V
+  - TP1 pin1
+  - U2 VIN
+  - D1 pin1 (-)
+  - C2 pin1 (+)
+  - C1 pin1 (+)
+  - U1 VPOS
+
+NET: GND
+  - TP2 pin1
+  - J2 B1A12
+  - J2 A1B12
+  - D6 pin2
+  - D5 pin2
+  - D4 pin2
+  - D3 pin2
+  - D2 pin2
+  - C5 pin2 (-)
+  - R2 pin2
+  - C4 pin2 (-)
+  - C6 pin2 (-)
+  - U2 GND
+  - D1 pin2 (+)
+  - C2 pin2 (-)
+  - C1 pin2 (-)
+  - U1 VNEG (GND)
+
+NET: VBUS_OUT
+  - TP3 pin1
+  - J2 A4B9
+  - J2 B4A9
+  - D2 pin1
+  - C5 pin1 (+)
+  - C4 pin1 (+)
+  - L1 pin2 (-)
+  - U2 VOUT
+
+
+COMPONENT_PINS:
+J1 (WJ500V-5.08-2P)
+- pin1(VIN_POS, L, LINE): NETS(AC_L)
+- pin2(GND, N, NEUTRAL): NETS(AC_N)
+
+F1 (SCT1032T2A250V)
+- pin1: NETS(AC_L)
+- pin2: NETS(AC_L_FUSED)
+
+RV1 (MOV-14D471K)
+- pin1: NETS(AC_L_FUSED)
+- pin2: NETS(AC_N)
+
+TH1 (MF72 5D9)
+- pin1: NETS(AC_L_FUSED)
+- pin2: NETS(AC_L_LIMITED)
+
+LCM1 (XRSQ1010-10mH-H)
+- pin1: NETS(AC_L_LIMITED)
+- pin2: NETS(AC_L_FILTERED)
+- pin3: NETS(AC_N_FILTERED)
+- pin4: NETS(AC_N)
+
+C7 (100nF undefined)
+- pin1: NETS(AC_L_FILTERED)
+- pin2: NETS(AC_N_FILTERED)
+
+R3 (1MΩ res1206)
+- pin1(anode, pos, left): NETS(AC_L_FILTERED)
+- pin2(cathode, neg, right): NETS(X_CAP_BLEED_MID)
+
+R4 (1MΩ res1206)
+- pin1(anode, pos, left): NETS(X_CAP_BLEED_MID)
+- pin2(cathode, neg, right): NETS(AC_N_FILTERED)
+
+U1 (HLK-20M15C)
+- pin1(AC2, AC_N, N): NETS(AC_N_FILTERED)
+- pin2(AC1, AC_L, L): NETS(AC_L_FILTERED)
+- pin3(VNEG, GND): NETS(GND)
+- pin4(VPOS, VOUT_15V): NETS(VIN_15V)
+
+C1 (100uF undefined)
+- pin1(pos): NETS(VIN_15V)
+- pin2(neg): NETS(GND)
+
+C2 (100nF cap0603)
+- pin1(anode, pos, left): NETS(VIN_15V)
+- pin2(cathode, neg, right): NETS(GND)
+
+D1 (SMBJ15A)
+- pin1(C, K, CATHODE): NETS(VIN_15V)
+- pin2(A, ANODE): NETS(GND)
+
+U2 (IP6520)
+- pin1(VOUT): NETS(VBUS_OUT)
+- pin2(VIN): NETS(VIN_15V)
+- pin3(SW): NETS(SW)
+- pin4(BST): NETS(BST)
+- pin5(DM): NETS(USB_DM)
+- pin6(DP): NETS(USB_DP)
+- pin7(CC1): NETS(CC1)
+- pin8(CC2): NETS(CC2)
+- pin9(GND): NETS(GND)
+
+C3 (2.2uF cap0603)
+- pin1(anode, pos, left): NETS(BST)
+- pin2(cathode, neg, right): NETS(SW)
+
+L1 (PDMTAT068125-220MLU)
+- pin1(anode, pos, left): NETS(SW)
+- pin2(cathode, neg, right): NETS(VBUS_OUT)
+
+R1 (2Ω res0603)
+- pin1(anode, pos, left): NETS(SW)
+- pin2(cathode, neg, right): NETS(SNUB)
+
+C6 (1nF cap0603)
+- pin1(anode, pos, left): NETS(SNUB)
+- pin2(cathode, neg, right): NETS(GND)
+
+C4 (100uF undefined)
+- pin1(pos): NETS(VBUS_OUT)
+- pin2(neg): NETS(GND)
+
+R2 (0Ω res0603)
+- pin1(anode, pos, left): NETS(USB_SHIELD)
+- pin2(cathode, neg, right): NETS(GND)
+
+C5 (100nF cap0603)
+- pin1(anode, pos, left): NETS(VBUS_OUT)
+- pin2(cathode, neg, right): NETS(GND)
+
+D2 (SMBJ13A)
+- pin1(C): NETS(VBUS_OUT)
+- pin2(A): NETS(GND)
+
+D3 (PESD5V0H1BSF)
+- pin1: NETS(CC1)
+- pin2: NETS(GND)
+
+D4 (PESD5V0H1BSF)
+- pin1: NETS(CC2)
+- pin2: NETS(GND)
+
+D5 (PESD5V0H1BSF)
+- pin1: NETS(USB_DP)
+- pin2: NETS(GND)
+
+D6 (PESD5V0H1BSF)
+- pin1: NETS(USB_DM)
+- pin2: NETS(GND)
+
+J2 (TYPE-C-31-M-12)
+- pin1(EH2, SH1): NETS(USB_SHIELD)
+- pin2(EH1, SH2): NETS(USB_SHIELD)
+- pin3(EH4, SH3): NETS(USB_SHIELD)
+- pin4(EH3, SH4): NETS(USB_SHIELD)
+- pin5(B8, SBU2): NOT_CONNECTED
+- pin6(A5, CC1): NETS(CC1)
+- pin7(B7, DN2): NETS(USB_DM)
+- pin8(A6, DP1): NETS(USB_DP)
+- pin9(A7, DN1): NETS(USB_DM)
+- pin10(B6, DP2): NETS(USB_DP)
+- pin11(A8, SBU1): NOT_CONNECTED
+- pin12(B5, CC2): NETS(CC2)
+- pin13(A1B12, GND1): NETS(GND)
+- pin14(B1A12, GND2): NETS(GND)
+- pin15(B4A9, VBUS1): NETS(VBUS_OUT)
+- pin16(A4B9, VBUS2): NETS(VBUS_OUT)
+
+TP1
+- pin1: NETS(VIN_15V)
+
+TP2
+- pin1: NETS(GND)
+
+TP3
+- pin1: NETS(VBUS_OUT)
