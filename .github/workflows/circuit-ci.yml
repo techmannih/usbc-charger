@@ -68,8 +68,8 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Check committed fabrication package integrity
         run: bun run check:fabrication
-      - name: Build circuit
-        run: bun run build
+      - name: Build routed circuit
+        run: bun run build:routed
       - name: Check fresh routed circuit for copper shorts
         run: bun node_modules/tscircuit/cli.mjs check shorts dist/index/circuit.json
       - name: Retain build output and any short-check diagnostics

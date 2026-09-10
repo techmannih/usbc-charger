@@ -56,6 +56,7 @@ TP3 is missing schematic reference designator text. For a custom symbol, add nam
 
 Build complete
   Circuits  1 passed
+  Options   autorouter-timeout
   Output    dist
 
 ✓ Done

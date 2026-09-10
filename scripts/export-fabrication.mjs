@@ -35,7 +35,7 @@ if (/<(?:TraceCanBeSimplifiedByMovingComponent|TwoPinComponentShouldBeVertical|\
   schematic.status = "review-required"
 }
 run("placement", [cli, "check", "placement"])
-run("build", [cli, "build", "--disable-parts-engine", "index.circuit.tsx"], { required: true })
+run("build", [cli, "build", "--ignore-config", "--disable-parts-engine", "--autorouter-timeout", "5m", "index.circuit.tsx"], { required: true })
 const circuitPath = join(work, "circuit.json")
 copyFileSync(join(root, "dist/index/circuit.json"), circuitPath)
 const circuit = readJson(circuitPath)

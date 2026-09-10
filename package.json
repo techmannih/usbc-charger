@@ -14,19 +14,21 @@
   "private": true,
   "scripts": {
     "dev": "tsci dev",
-    "build": "tsci build index.circuit.tsx",
+    "build": "tsci build index.circuit.tsx --disable-parts-engine",
+    "build:placement": "bun run build",
+    "build:routed": "tsci build index.circuit.tsx --ignore-config --disable-parts-engine --autorouter-timeout 5m",
     "build:preview": "tsci build --pcb-png --schematic-png --3d-png index.circuit.tsx",
-    "build:handoff": "tsci build --kicad-project-zip --step --glbs index.circuit.tsx",
+    "build:handoff": "bun run build:routed --kicad-project-zip --step --glbs",
     "export:fabrication": "bun scripts/export-fabrication.mjs",
     "check:fabrication": "bun scripts/check-fabrication.mjs",
     "check:pdos": "bun firmware/check-pdos.mjs",
-    "snapshot": "tsci snapshot index.circuit.tsx",
-    "snapshot:update": "tsci snapshot index.circuit.tsx --update",
+    "snapshot": "tsci snapshot index.circuit.tsx --3d",
+    "snapshot:update": "tsci snapshot index.circuit.tsx --update --3d",
     "snapshot:3d": "tsci snapshot index.circuit.tsx --3d --camera-preset top-center-angled",
     "snapshot:3d:update": "tsci snapshot index.circuit.tsx --3d --update --camera-preset top-center-angled",
     "typecheck": "tsc --noEmit",
     "check:netlist": "tsci check netlist index.circuit.tsx",
-    "verify": "bun run typecheck && tsci check netlist && tsci check schematic-placement && tsci check placement && tsci check shorts && tsci build index.circuit.tsx",
+    "verify": "bun run typecheck && tsci check netlist && tsci check schematic-placement && tsci check placement && bun run build:routed && tsci check shorts dist/index/circuit.json",
     "start": "tsci dev"
   }
 }

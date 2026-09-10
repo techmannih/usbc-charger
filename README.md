@@ -149,10 +149,12 @@ bun run dev
 | `bun run dev` | Start the interactive local viewer |
 | `bun run typecheck` | Check the TypeScript source |
 | `bun run check:netlist` | Check declared circuit connections |
-| `bun run build` | Build `dist/index/circuit.json` from the TSX source |
+| `bun run build` | Build `dist/index/circuit.json` with routing and the parts engine disabled |
+| `bun run build:placement` | Alias for the default placement build |
+| `bun run build:routed` | Build with full routing, bypassing the placement config; 5-minute timeout per autorouter phase |
 | `bun run verify` | Run type, netlist, schematic placement, PCB placement, shorts, and build checks |
 | `bun run build:preview` | Generate PCB, schematic, and 3D preview images |
-| `bun run snapshot:update` | Update committed PCB and schematic snapshots |
+| `bun run snapshot:update` | Update committed PCB, schematic, and 3D snapshots |
 | `bun run snapshot:3d:update` | Update the committed angled 3D snapshot |
 | `bun run build:handoff` | Generate KiCad, STEP, and GLB handoff outputs |
 | `bun run export:fabrication` | Fresh build, check records, BOM/CPL/pinmap, both schematic sheets and gated Gerber export |
@@ -160,6 +162,10 @@ bun run dev
 | `bun run check:pdos <capture.json>` | Compare decoded analyzer PDOs with the design targets; no device flashing |
 
 Generated export files are written under `dist/index/`.
+
+`tscircuit.config.json` disables routing for the default build, including hosted
+builds that read this config. Use `bun run build:routed` for routed output.
+CI, `verify`, handoff builds, and fabrication exports explicitly enable routing.
 
 The dedicated fabrication workflow writes a versioned review package under
 [`fabrication/`](fabrication/README.md), plus the root [`BOM.csv`](BOM.csv).
