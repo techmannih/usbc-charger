@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-09-10T16:02:11.285Z",
-  "circuit_sha256": "fe84af0d7e9615a9ca3987804e2e22c6ca4a88c9c3335202737cdaa05d9924c8",
+  "generated_at_utc": "2026-09-10T16:27:03.556Z",
+  "circuit_sha256": "8f668bdd1f5a093d7371a0e17d3e3b9df6e36a7572dbfd88c764d15fff32df26",
   "status": "engineering-review",
   "released_for_manufacturing": false,
   "gerbers_generated": true,
@@ -81,7 +81,7 @@
         "node_modules/tscircuit/cli.mjs",
         "check",
         "shorts",
-        "dist/fabrication-stage-trzBq0/circuit.json"
+        "dist/fabrication-stage-lY9bqU/circuit.json"
       ],
       "exit_code": 0,
       "status": "passed",
@@ -93,11 +93,11 @@
         "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
         "node_modules/tscircuit/cli.mjs",
         "export",
-        "dist/fabrication-stage-trzBq0/circuit.json",
+        "dist/fabrication-stage-lY9bqU/circuit.json",
         "-f",
         "readable-netlist",
         "-o",
-        "dist/fabrication-stage-trzBq0/netlist.txt"
+        "dist/fabrication-stage-lY9bqU/netlist.txt"
       ],
       "exit_code": 0,
       "status": "passed",
@@ -109,11 +109,11 @@
         "/opt/homebrew/Cellar/bun/1.3.14/bin/bun",
         "node_modules/tscircuit/cli.mjs",
         "export",
-        "dist/fabrication-stage-trzBq0/circuit.json",
+        "dist/fabrication-stage-lY9bqU/circuit.json",
         "-f",
         "gerbers",
         "-o",
-        "dist/fabrication-stage-trzBq0/cli-gerbers.zip"
+        "dist/fabrication-stage-lY9bqU/cli-gerbers.zip"
       ],
       "exit_code": 0,
       "status": "passed",

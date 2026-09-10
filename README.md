@@ -196,10 +196,18 @@ documented in [`DRC_REPORT.md`](DRC_REPORT.md); this workflow is not the full
 `bun run verify` release gate. To enforce checks before merge, configure the
 three check names as required in GitHub branch rules after their first run.
 
-The package version is `1.0.9` to try bypassing the suspected hosted `1.0.8`
-release-version collision. The hosted retry still needs a push to `main` (or a
-PR merge) and must be checked separately in tscircuit releases. A passing
-`Circuit CI` result does not prove that hosted publishing succeeded.
+The package version is `1.0.10`, which was unused in the tscircuit registry when
+checked on September 10, 2026. Hosted `1.0.9` already belongs to commit `6e64034`;
+the integration skips a different commit that reuses that release version.
+Use an unused version when pushing the next hosted release.
+
+The `1.0.9` hosted build completed with exit code 0 and uploaded its outputs,
+but its GitHub `tscircuit/build` status was absent. The later `dabd400` push was
+accepted by the webhook but produced no new release. A version bump addresses
+the release collision; missing GitHub status updates require a separate check
+of tscircuit's integration permissions and server-side status-update logs.
+Verify both the release commit and the GitHub status after pushing to `main`
+(or merging a PR). A passing `Circuit CI` result alone does not establish either.
 
 Regenerate `bun run export:fabrication` and run `bun run check:fabrication`
 after changing files covered by the fabrication manifest, including

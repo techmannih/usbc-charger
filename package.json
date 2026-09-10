@@ -1,6 +1,6 @@
 {
   "name": "usb-c-pd-18w-charger",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "packageManager": "bun@1.3.14",
   "main": "index.circuit.tsx",
   "devDependencies": {
