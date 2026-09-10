@@ -1,6 +1,7 @@
 {
   "name": "usb-c-pd-18w-charger",
-  "version": "1.0.0",
+  "version": "1.0.9",
+  "packageManager": "bun@1.3.14",
   "main": "index.circuit.tsx",
   "devDependencies": {
     "@tscircuit/checks": "0.0.189",
@@ -24,6 +25,7 @@
     "snapshot:3d": "tsci snapshot index.circuit.tsx --3d --camera-preset top-center-angled",
     "snapshot:3d:update": "tsci snapshot index.circuit.tsx --3d --update --camera-preset top-center-angled",
     "typecheck": "tsc --noEmit",
+    "check:netlist": "tsci check netlist index.circuit.tsx",
     "verify": "bun run typecheck && tsci check netlist && tsci check schematic-placement && tsci check placement && tsci check shorts && tsci build index.circuit.tsx",
     "start": "tsci dev"
   }

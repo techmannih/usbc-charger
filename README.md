@@ -110,6 +110,7 @@ The supplier IDs are included for design reproducibility, not as an approval of 
 ├── firmware/                      Autonomous-controller profile and host PDO checker
 ├── fabrication/                   BOM, CPL, Gerbers, pin map, drawings and check records
 ├── scripts/                       Reproducible export and fabrication-integrity checks
+├── .github/workflows/             Independent GitHub circuit CI
 ├── BOM.csv                        Generated complete purchased electrical BOM
 ├── __snapshots__/                 Schematic, PCB, and 3D reference renders
 ├── mechanical/                    Enclosure fit-check source
@@ -147,6 +148,7 @@ bun run dev
 | --- | --- |
 | `bun run dev` | Start the interactive local viewer |
 | `bun run typecheck` | Check the TypeScript source |
+| `bun run check:netlist` | Check declared circuit connections |
 | `bun run build` | Build `dist/index/circuit.json` from the TSX source |
 | `bun run verify` | Run type, netlist, schematic placement, PCB placement, shorts, and build checks |
 | `bun run build:preview` | Generate PCB, schematic, and 3D preview images |
@@ -171,6 +173,32 @@ The controller needs no external application firmware. The new
 contains a host-side capture checker. It cannot change U2's behavior.
 
 ## Development workflow
+
+Use a topic branch and open a pull request into `main`, with a descriptive
+commit/PR title such as `ci: add circuit build checks`. The
+[`Circuit CI`](.github/workflows/circuit-ci.yml) workflow runs on pull requests
+into `main`, pushes to `main`, and manual dispatches. It provides three checks:
+`Typecheck`, `Netlist`, and `Build`. Build waits for both other checks, verifies
+the committed fabrication package, compiles the circuit, then checks the fresh
+routed output for copper shorts. Build outputs and any short-check diagnostics
+are retained as a workflow artifact for seven days.
+
+CI uses Bun 1.3.14 from `packageManager`, SHA-pinned actions, a frozen lockfile,
+and read-only repository permissions. It does not publish to tscircuit, push
+commits, or approve manufacturing. Existing placement-review findings remain
+documented in [`DRC_REPORT.md`](DRC_REPORT.md); this workflow is not the full
+`bun run verify` release gate. To enforce checks before merge, configure the
+three check names as required in GitHub branch rules after their first run.
+
+The package version is `1.0.9` to try bypassing the suspected hosted `1.0.8`
+release-version collision. The hosted retry still needs a push to `main` (or a
+PR merge) and must be checked separately in tscircuit releases. A passing
+`Circuit CI` result does not prove that hosted publishing succeeded.
+
+Regenerate `bun run export:fabrication` and run `bun run check:fabrication`
+after changing files covered by the fabrication manifest, including
+`package.json`, documentation, or export scripts; commit the refreshed outputs
+with those changes.
 
 After changing the circuit source or a component definition:
 
